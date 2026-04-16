@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Truck, Phone, MapPin, CreditCard, Clock, ArrowLeft, User, StickyNote, RefreshCw, AlertCircle, Printer, Navigation } from 'lucide-react';
-import MapNavigationButton from '../components/delivery/MapNavigationButton';
+import { Truck, Phone, MapPin, CreditCard, Clock, ArrowLeft, User, StickyNote, RefreshCw, AlertCircle, Printer, Map } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StatusBadge from '../components/shared/StatusBadge';
+import DeliveryMap from '../components/delivery/DeliveryMap';
 import moment from 'moment';
 
 const PAYMENT_LABELS = {
@@ -19,6 +19,7 @@ export default function DeliveryPanel() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState('ready');
+  const [mapOrder, setMapOrder] = useState(null);
 
   const { data: orders = [], isLoading, refetch } = useQuery({
     queryKey: ['delivery-orders'],
@@ -157,8 +158,20 @@ export default function DeliveryPanel() {
                         </div>
                       </div>
                     </div>
-                    <div style={{ paddingLeft: 28, marginTop: 8 }}>
-                      <MapNavigationButton order={order} compact />
+                    <div style={{ paddingLeft: 28, marginTop: 8, display: 'flex', gap: 8 }}>
+                      <button
+                        onClick={() => setMapOrder(order)}
+                        style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 5,
+                          padding: '6px 12px', borderRadius: 'var(--r-full)',
+                          background: 'var(--purple-50)', border: '1px solid var(--purple-200)',
+                          color: 'var(--purple-700)', fontSize: 12, fontWeight: 700,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <Map style={{ width: 13, height: 13 }} />
+                        Ver no Mapa
+                      </button>
                     </div>
                   </div>
                 ) : (
@@ -227,6 +240,7 @@ export default function DeliveryPanel() {
           );
         })
       )}
+      {mapOrder && <DeliveryMap order={mapOrder} onClose={() => setMapOrder(null)} />}
     </div>
   );
 }
