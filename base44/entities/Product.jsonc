@@ -1,0 +1,40 @@
+{
+  "name": "Product",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Product name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Product description"
+    },
+    "image": {
+      "type": "string",
+      "description": "Product image URL"
+    },
+    "price": {
+      "type": "number",
+      "description": "Product price"
+    },
+    "category_id": {
+      "type": "string",
+      "description": "Category ID reference"
+    },
+    "available": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether product is available"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether product is featured"
+    }
+  },
+  "required": [
+    "name",
+    "price"
+  ]
+}

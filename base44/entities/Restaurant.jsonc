@@ -1,0 +1,42 @@
+{
+  "name": "Restaurant",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Restaurant name"
+    },
+    "logo": {
+      "type": "string",
+      "description": "Logo image URL"
+    },
+    "description": {
+      "type": "string",
+      "description": "Restaurant description"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Contact phone"
+    },
+    "address": {
+      "type": "string",
+      "description": "Restaurant address"
+    },
+    "delivery_fee": {
+      "type": "number",
+      "description": "Delivery fee amount"
+    },
+    "avg_prep_time": {
+      "type": "number",
+      "description": "Average preparation time in minutes"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether restaurant is currently active"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}
