@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { CartProvider } from './context/CartContext';
 
+import DesktopLayout from './components/layout/DesktopLayout';
 import MenuHome from './pages/MenuHome';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
@@ -46,12 +47,17 @@ const AuthenticatedApp = () => {
   return (
     <CartProvider>
       <Routes>
-        <Route path="/" element={<MenuHome />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/confirmation/:id" element={<OrderConfirmation />} />
-        <Route path="/orders" element={<MyOrders />} />
+        {/* Customer-facing pages — use DesktopLayout (sidebar on desktop, bottom nav on mobile) */}
+        <Route element={<DesktopLayout />}>
+          <Route path="/" element={<MenuHome />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/confirmation/:id" element={<OrderConfirmation />} />
+          <Route path="/orders" element={<MyOrders />} />
+        </Route>
+
+        {/* Staff / admin pages — no layout wrapper */}
         <Route path="/kitchen" element={<KitchenPanel />} />
         <Route path="/delivery" element={<DeliveryPanel />} />
         <Route path="/admin" element={<AdminPanel />} />

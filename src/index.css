@@ -124,6 +124,22 @@ body {
   overflow-x: hidden;
 }
 
+/* On desktop, customer pages inside DesktopLayout fill the full content area */
+@media (min-width: 1024px) {
+  .app-shell {
+    max-width: 100%;
+    margin: 0;
+  }
+  .page-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 48px 80px;
+  }
+  .bottom-nav {
+    display: none;
+  }
+}
+
 .page-container {
   padding: var(--page-pad);
   padding-bottom: 100px;
