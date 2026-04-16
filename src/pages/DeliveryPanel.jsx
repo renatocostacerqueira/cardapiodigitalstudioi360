@@ -217,10 +217,10 @@ export default function DeliveryPanel() {
                 )}
               </div>
 
-              {/* Driver location updater – shown when out for delivery */}
-              {order.status === 'out_for_delivery' && order.order_type === 'delivery' && (
+              {/* Auto GPS tracking – active when out for delivery */}
+              {order.order_type === 'delivery' && (
                 <div style={{ padding: '0 16px 12px' }}>
-                  <DriverLocationUpdater order={order} />
+                  <DriverLocationUpdater order={order} isActive={order.status === 'out_for_delivery'} />
                 </div>
               )}
 
