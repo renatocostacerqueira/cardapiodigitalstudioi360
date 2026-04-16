@@ -1,11 +1,48 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import SearchBar from '../components/menu/SearchBar';
 import CategoryPills from '../components/menu/CategoryPills';
-import ProductCard from '../components/menu/ProductCard';
 import BottomNav from '../components/menu/BottomNav';
-import { UtensilsCrossed } from 'lucide-react';
+import { UtensilsCrossed, ImageOff, Star } from 'lucide-react';
+
+function ProductCard({ product }) {
+  const navigate = useNavigate();
+  return (
+    <div
+      className="product-card animate-fade-in"
+      onClick={() => navigate(`/product/${product.id}`)}
+      style={{ position: 'relative' }}
+    >
+      <div className="product-card-image-wrap">
+        {product.image ? (
+          <img
+            src={product.image}
+            alt={product.name}
+            className="product-card-image"
+            loading="lazy"
+            width="200"
+            height="200"
+          />
+        ) : (
+          <div className="img-placeholder" style={{ width: '100%', aspectRatio: '1' }}>
+            <ImageOff style={{ width: 28, height: 28 }} />
+          </div>
+        )}
+        {product.featured && <div className="featured-badge">⭐ Popular</div>}
+      </div>
+      <div className="product-card-body">
+        <div className="product-card-name">{product.name}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
+          <Star style={{ width: 11, height: 11, fill: '#eab308', color: '#eab308' }} />
+          <span style={{ fontSize: 11, color: 'var(--gray-400)', fontWeight: 600 }}>4.8</span>
+        </div>
+        <div className="product-card-price">R$ {product.price?.toFixed(2)}</div>
+      </div>
+    </div>
+  );
+}
 
 export default function MenuHome() {
   const [search, setSearch] = useState('');
@@ -32,14 +69,25 @@ export default function MenuHome() {
   return (
     <div className="app-shell">
       <div className="page-container">
-        <div style={{ marginBottom: 20, paddingTop: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-            <UtensilsCrossed style={{ width: 24, height: 24, color: 'var(--purple-600)' }} />
-            <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)' }}>Our Menu</h1>
+
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28, paddingTop: 12 }}>
+          <div>
+            <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--purple-400)', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 6 }}>
+              Good food, fast delivery
+            </p>
+            <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--gray-900)', letterSpacing: '-0.04em', lineHeight: 1.15 }}>
+              What would you<br />like to eat? 🍽️
+            </h1>
           </div>
-          <p style={{ fontSize: 14, color: 'var(--gray-500)' }}>
-            Fresh & delicious, made with love
-          </p>
+          <div style={{
+            width: 46, height: 46, borderRadius: 'var(--r-full)',
+            background: 'linear-gradient(135deg, var(--purple-500), var(--purple-700))',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0, marginTop: 4, boxShadow: '0 4px 14px rgba(109,40,217,0.30)',
+          }}>
+            <UtensilsCrossed style={{ width: 22, height: 22, color: '#fff' }} />
+          </div>
         </div>
 
         <SearchBar value={search} onChange={setSearch} placeholder="Search dishes..." />
@@ -51,41 +99,42 @@ export default function MenuHome() {
         />
 
         {isLoading ? (
-          <div className="loading-container">
-            <div className="spinner" />
-          </div>
+          <div className="loading-container"><div className="spinner" /></div>
         ) : filtered.length === 0 ? (
           <div className="empty-state">
             <UtensilsCrossed />
             <h3>No items found</h3>
-            <p>Try adjusting your search or category filter</p>
+            <p>Try a different search or category</p>
           </div>
         ) : (
           <>
             {!search && !activeCategory && featured.length > 0 && (
-              <div style={{ marginBottom: 20 }}>
-                <h2 className="section-title">⭐ Featured</h2>
+              <div style={{ marginBottom: 28 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                  <h2 className="section-title" style={{ margin: 0 }}>Popular Now</h2>
+                  <span style={{ fontSize: 12, color: 'var(--purple-500)', fontWeight: 600, cursor: 'pointer' }}>See all</span>
+                </div>
                 <div className="product-grid">
-                  {featured.map(p => (
-                    <ProductCard key={p.id} product={p} />
-                  ))}
+                  {featured.map(p => <ProductCard key={p.id} product={p} />)}
                 </div>
               </div>
             )}
 
-            <div style={{ marginBottom: 8 }}>
-              <h2 className="section-title">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+              <h2 className="section-title" style={{ margin: 0 }}>
                 {activeCategory
                   ? categories.find(c => c.id === activeCategory)?.name || 'Items'
-                  : 'All Items'
-                }
+                  : (search ? 'Results' : 'All Items')}
               </h2>
+              <span style={{ fontSize: 12, color: 'var(--gray-400)', fontWeight: 500 }}>
+                {filtered.length} items
+              </span>
             </div>
 
             <div className="product-grid">
-              {filtered.filter(p => !(!search && !activeCategory && p.featured)).map(p => (
-                <ProductCard key={p.id} product={p} />
-              ))}
+              {filtered
+                .filter(p => !(!search && !activeCategory && p.featured))
+                .map(p => <ProductCard key={p.id} product={p} />)}
             </div>
           </>
         )}

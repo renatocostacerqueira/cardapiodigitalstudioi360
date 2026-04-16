@@ -8,6 +8,7 @@ export default function QuantitySelector({ value, onChange, min = 1 }) {
         className="qty-btn"
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={value <= min}
+        aria-label="Decrease quantity"
       >
         <Minus style={{ width: 16, height: 16 }} />
       </button>
@@ -15,6 +16,12 @@ export default function QuantitySelector({ value, onChange, min = 1 }) {
       <button
         className="qty-btn"
         onClick={() => onChange(value + 1)}
+        aria-label="Increase quantity"
+        style={{
+          borderColor: 'var(--purple-300)',
+          color: 'var(--purple-600)',
+          background: 'var(--purple-50)',
+        }}
       >
         <Plus style={{ width: 16, height: 16 }} />
       </button>

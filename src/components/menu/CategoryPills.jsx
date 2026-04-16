@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function CategoryPills({ categories, activeId, onSelect }) {
   return (
-    <div className="pill-list" style={{ marginBottom: 16 }}>
+    <div className="pill-list">
       <button
         className={`pill ${!activeId ? 'active' : ''}`}
         onClick={() => onSelect(null)}

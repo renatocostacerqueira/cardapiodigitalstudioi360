@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, ShoppingCart, ClipboardList } from 'lucide-react';
+import { Home, ShoppingCart, ClipboardList, User } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 
 export default function BottomNav() {
@@ -12,6 +12,7 @@ export default function BottomNav() {
     { to: '/', icon: Home, label: 'Menu' },
     { to: '/cart', icon: ShoppingCart, label: 'Cart', badge: totalItems },
     { to: '/orders', icon: ClipboardList, label: 'Orders' },
+    { to: '/admin', icon: User, label: 'Admin' },
   ];
 
   return (
@@ -25,8 +26,10 @@ export default function BottomNav() {
             to={item.to}
             className={`nav-item ${isActive ? 'active' : ''}`}
           >
-            <Icon />
-            {item.badge > 0 && <div className="nav-badge">{item.badge}</div>}
+            <div style={{ position: 'relative' }}>
+              <Icon />
+              {item.badge > 0 && <div className="nav-badge">{item.badge}</div>}
+            </div>
             <span>{item.label}</span>
           </Link>
         );
