@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Truck, Phone, MapPin, CreditCard, Clock, ArrowLeft, User, StickyNote, RefreshCw, AlertCircle, Printer } from 'lucide-react';
+import { Truck, Phone, MapPin, CreditCard, Clock, ArrowLeft, User, StickyNote, RefreshCw, AlertCircle, Printer, Navigation } from 'lucide-react';
+import MapNavigationButton from '../components/delivery/MapNavigationButton';
 import { useNavigate } from 'react-router-dom';
 import StatusBadge from '../components/shared/StatusBadge';
 import moment from 'moment';
@@ -139,20 +140,25 @@ export default function DeliveryPanel() {
                 <div className="divider" style={{ margin: '10px 0' }} />
 
                 {order.order_type === 'delivery' && order.address_street ? (
-                  <div className="info-row">
-                    <MapPin style={{ width: 16, height: 16, color: 'var(--gray-300)' }} />
-                    <div>
-                      <div className="info-label">Delivery Address</div>
-                      <div className="info-value">
-                        {order.address_street}, {order.address_number}
-                        {order.address_complement && ` — ${order.address_complement}`}
-                        <br />{order.address_neighborhood}, {order.address_city}
-                        {order.address_reference && (
-                          <div style={{ fontSize: 12, color: 'var(--gray-400)', marginTop: 3, fontStyle: 'italic' }}>
-                            📍 {order.address_reference}
-                          </div>
-                        )}
+                  <div>
+                    <div className="info-row" style={{ marginBottom: 0 }}>
+                      <MapPin style={{ width: 16, height: 16, color: 'var(--gray-300)' }} />
+                      <div>
+                        <div className="info-label">Delivery Address</div>
+                        <div className="info-value">
+                          {order.address_street}, {order.address_number}
+                          {order.address_complement && ` — ${order.address_complement}`}
+                          <br />{order.address_neighborhood}, {order.address_city}
+                          {order.address_reference && (
+                            <div style={{ fontSize: 12, color: 'var(--gray-400)', marginTop: 3, fontStyle: 'italic' }}>
+                              📍 {order.address_reference}
+                            </div>
+                          )}
+                        </div>
                       </div>
+                    </div>
+                    <div style={{ paddingLeft: 28, marginTop: 8 }}>
+                      <MapNavigationButton order={order} compact />
                     </div>
                   </div>
                 ) : (

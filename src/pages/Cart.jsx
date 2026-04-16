@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Trash2, ImageOff, ChevronRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import BottomNav from '../components/menu/BottomNav';
+import UpsellSuggestions from '../components/cart/UpsellSuggestions';
 
 function CartItemCard({ item, index, updateQuantity, removeItem }) {
   return (
@@ -90,6 +91,7 @@ function CartItemCard({ item, index, updateQuantity, removeItem }) {
 export default function Cart() {
   const navigate = useNavigate();
   const { items, updateQuantity, removeItem, totalPrice } = useCart();
+  const cartItemIds = items.map(i => i.product_id);
 
   return (
     <div className="app-shell">
@@ -127,6 +129,9 @@ export default function Cart() {
                 />
               ))}
             </div>
+
+            {/* Upsell suggestions */}
+            <UpsellSuggestions cartItemIds={cartItemIds} />
 
             {/* Order Summary */}
             <div className="card" style={{ marginBottom: 24 }}>
