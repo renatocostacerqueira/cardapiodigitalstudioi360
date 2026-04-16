@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { CheckCircle, Home, MapPin, CreditCard, Truck, Store, Clock, MessageSquare, RefreshCw } from 'lucide-react';
+import { CheckCircle, Home, MapPin, CreditCard, Truck, Store, Clock, MessageSquare } from 'lucide-react';
 import StatusBadge from '../components/shared/StatusBadge';
 import OrderTracker from '../components/order/OrderTracker';
+import LiveTrackingMap from '../components/delivery/LiveTrackingMap';
 
 const PAYMENT_LABELS = {
   cash: 'Dinheiro', cash_change: 'Dinheiro (com troco)', pix: 'PIX', debit: 'Cartão de Débito', credit: 'Cartão de Crédito',
@@ -73,24 +74,22 @@ export default function OrderConfirmation() {
           </div>
         </div>
 
-        {/* On the way banner */}
-        {isOutForDelivery && (
-          <div style={{
-            margin: '16px 0', padding: '16px 20px',
-            background: 'linear-gradient(135deg, var(--purple-600), var(--purple-800))',
-            borderRadius: 'var(--r-xl)', color: '#fff', textAlign: 'center',
-            boxShadow: '0 8px 24px rgba(109,40,217,0.35)',
-          }}>
-            <div style={{ fontSize: 28, marginBottom: 6 }}>🛵</div>
-            <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 4 }}>Seu pedido está a caminho!</div>
-            <div style={{ fontSize: 13, opacity: 0.85 }}>
-              Nosso entregador está indo até você — chegada estimada em ~{order.avg_prep_time || 30} min
+        {/* Live Map when out for delivery */}
+        {isOutForDelivery && order.order_type === 'delivery' && order.address_street && (
+          <div style={{ marginTop: 20, marginBottom: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+              <h3 className="section-title" style={{ margin: 0 }}>Rastreamento ao Vivo</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--purple-500)', fontWeight: 700 }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--green-500)', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
+                Ao Vivo
+              </div>
             </div>
+            <LiveTrackingMap order={order} />
           </div>
         )}
 
-        {/* Live Tracker */}
-        {!isDelivered && order.status !== 'cancelled' && (
+        {/* Live Tracker (steps) */}
+        {!isDelivered && order.status !== 'cancelled' && order.status !== 'out_for_delivery' && (
           <div className="card" style={{ marginTop: 20, marginBottom: 14 }}>
             <div className="card-body">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>

@@ -119,6 +119,26 @@
     "delivery_printed": {
       "type": "boolean",
       "default": false
+    },
+    "driver_lat": {
+      "type": "number",
+      "description": "Driver current latitude"
+    },
+    "driver_lng": {
+      "type": "number",
+      "description": "Driver current longitude"
+    },
+    "driver_location_updated_at": {
+      "type": "string",
+      "description": "ISO timestamp of last driver location update"
+    },
+    "customer_lat": {
+      "type": "number",
+      "description": "Customer location latitude (geocoded)"
+    },
+    "customer_lng": {
+      "type": "number",
+      "description": "Customer location longitude (geocoded)"
     }
   },
   "required": [

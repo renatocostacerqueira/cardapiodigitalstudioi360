@@ -5,6 +5,7 @@ import { Truck, Phone, MapPin, CreditCard, Clock, ArrowLeft, User, StickyNote, R
 import { useNavigate } from 'react-router-dom';
 import StatusBadge from '../components/shared/StatusBadge';
 import DeliveryMap from '../components/delivery/DeliveryMap';
+import DriverLocationUpdater from '../components/delivery/DriverLocationUpdater';
 import moment from 'moment';
 
 const PAYMENT_LABELS = {
@@ -215,6 +216,13 @@ export default function DeliveryPanel() {
                   </div>
                 )}
               </div>
+
+              {/* Driver location updater – shown when out for delivery */}
+              {order.status === 'out_for_delivery' && order.order_type === 'delivery' && (
+                <div style={{ padding: '0 16px 12px' }}>
+                  <DriverLocationUpdater order={order} />
+                </div>
+              )}
 
               <div className="ticket-actions">
                 {order.status === 'ready' && order.order_type === 'delivery' && (
