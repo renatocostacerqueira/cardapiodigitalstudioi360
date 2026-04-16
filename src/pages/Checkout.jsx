@@ -114,6 +114,64 @@ export default function Checkout() {
       orderData.address_reference = address.reference;
     }
     const created = await base44.entities.Order.create(orderData);
+
+    // Generate kitchen ticket
+    const kitchenTicket = {
+      order_id: created.id,
+      order_number: orderNumber,
+      ticket_type: 'kitchen',
+      order_type: orderType,
+      customer_name: customerName,
+      notes,
+      items: items.map(i => ({
+        product_name: i.product_name,
+        quantity: i.quantity,
+        unit_price: i.unit_price,
+        subtotal: i.subtotal,
+        notes: i.notes || '',
+      })),
+      total_price: grandTotal,
+      delivery_fee: deliveryFee,
+      printed: false,
+    };
+
+    // Generate delivery ticket
+    const deliveryTicket = {
+      order_id: created.id,
+      order_number: orderNumber,
+      ticket_type: 'delivery',
+      order_type: orderType,
+      customer_name: customerName,
+      customer_phone: customerPhone,
+      payment_method: paymentMethod,
+      change_amount: paymentMethod === 'cash_change' ? parseFloat(changeAmount) : 0,
+      notes,
+      items: items.map(i => ({
+        product_name: i.product_name,
+        quantity: i.quantity,
+        unit_price: i.unit_price,
+        subtotal: i.subtotal,
+        notes: i.notes || '',
+      })),
+      total_price: grandTotal,
+      delivery_fee: deliveryFee,
+      printed: false,
+    };
+
+    if (orderType === 'delivery') {
+      deliveryTicket.address_street = address.street;
+      deliveryTicket.address_number = address.number;
+      deliveryTicket.address_complement = address.complement;
+      deliveryTicket.address_neighborhood = address.neighborhood;
+      deliveryTicket.address_city = address.city;
+      deliveryTicket.address_reference = address.reference;
+    }
+
+    await Promise.all([
+      base44.entities.Ticket.create(kitchenTicket),
+      base44.entities.Ticket.create(deliveryTicket),
+    ]);
+
     clearCart();
     navigate(`/confirmation/${created.id}`);
   };

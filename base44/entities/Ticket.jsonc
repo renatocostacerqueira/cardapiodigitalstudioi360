@@ -1,0 +1,98 @@
+{
+  "name": "Ticket",
+  "type": "object",
+  "properties": {
+    "order_id": {
+      "type": "string",
+      "description": "Reference to the Order"
+    },
+    "order_number": {
+      "type": "string"
+    },
+    "ticket_type": {
+      "type": "string",
+      "enum": [
+        "kitchen",
+        "delivery"
+      ],
+      "description": "Type of ticket"
+    },
+    "order_type": {
+      "type": "string",
+      "enum": [
+        "delivery",
+        "pickup"
+      ]
+    },
+    "customer_name": {
+      "type": "string"
+    },
+    "customer_phone": {
+      "type": "string"
+    },
+    "payment_method": {
+      "type": "string"
+    },
+    "change_amount": {
+      "type": "number"
+    },
+    "address_street": {
+      "type": "string"
+    },
+    "address_number": {
+      "type": "string"
+    },
+    "address_complement": {
+      "type": "string"
+    },
+    "address_neighborhood": {
+      "type": "string"
+    },
+    "address_city": {
+      "type": "string"
+    },
+    "address_reference": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product_name": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unit_price": {
+            "type": "number"
+          },
+          "subtotal": {
+            "type": "number"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "total_price": {
+      "type": "number"
+    },
+    "delivery_fee": {
+      "type": "number"
+    },
+    "printed": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "order_id",
+    "ticket_type"
+  ]
+}

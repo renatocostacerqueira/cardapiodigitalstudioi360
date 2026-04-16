@@ -18,6 +18,8 @@ import DeliveryPanel from './pages/DeliveryPanel';
 import AdminPanel from './pages/AdminPanel';
 import ManageProducts from './pages/admin/ManageProducts';
 import ManageCategories from './pages/admin/ManageCategories';
+import KitchenTicketPrint from './pages/KitchenTicketPrint';
+import DeliveryTicketPrint from './pages/DeliveryTicketPrint';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -53,6 +55,8 @@ const AuthenticatedApp = () => {
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/admin/products" element={<ManageProducts />} />
         <Route path="/admin/categories" element={<ManageCategories />} />
+        <Route path="/ticket/kitchen/:id" element={<KitchenTicketPrint />} />
+        <Route path="/ticket/delivery/:id" element={<DeliveryTicketPrint />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </CartProvider>
