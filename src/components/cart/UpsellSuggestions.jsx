@@ -35,7 +35,7 @@ export default function UpsellSuggestions({ cartItemIds = [] }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
         <Sparkles style={{ width: 16, height: 16, color: 'var(--purple-500)' }} />
         <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-800)', letterSpacing: '-0.01em' }}>
-          You might also like
+          Você também pode gostar
         </h3>
       </div>
       <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none' }}>
@@ -72,7 +72,7 @@ export default function UpsellSuggestions({ cartItemIds = [] }) {
                   transition: 'background 0.15s',
                 }}
               >
-                <Plus style={{ width: 13, height: 13 }} /> Add
+                <Plus style={{ width: 13, height: 13 }} /> Adicionar
               </button>
             </div>
           </div>

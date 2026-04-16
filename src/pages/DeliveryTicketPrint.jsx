@@ -6,11 +6,11 @@ import { Printer, ArrowLeft } from 'lucide-react';
 import moment from 'moment';
 
 const PAYMENT_LABELS = {
-  cash: 'Cash',
-  cash_change: 'Cash (with change)',
+  cash: 'Dinheiro',
+  cash_change: 'Dinheiro (com troco)',
   pix: 'PIX',
-  debit: 'Debit Card',
-  credit: 'Credit Card',
+  debit: 'Cartão de Débito',
+  credit: 'Cartão de Crédito',
 };
 
 export default function DeliveryTicketPrint() {
@@ -35,7 +35,7 @@ export default function DeliveryTicketPrint() {
           <ArrowLeft style={{ width: 20, height: 20 }} />
         </button>
         <button className="btn btn-primary btn-sm" onClick={() => window.print()}>
-          <Printer style={{ width: 16, height: 16 }} /> Print Delivery Ticket
+          <Printer style={{ width: 16, height: 16 }} /> Imprimir Ticket Entrega
         </button>
       </div>
 
@@ -50,7 +50,7 @@ export default function DeliveryTicketPrint() {
       }}>
         <div style={{ textAlign: 'center', borderBottom: '2px dashed #ccc', paddingBottom: 16, marginBottom: 16 }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#666', marginBottom: 6 }}>
-            *** DELIVERY TICKET ***
+            *** TICKET ENTREGA ***
           </div>
           <div style={{ fontSize: 26, fontWeight: 900, color: '#000' }}>
             {ticket.order_number}
@@ -65,13 +65,13 @@ export default function DeliveryTicketPrint() {
             padding: '3px 12px', borderRadius: 999,
             fontSize: 12, fontWeight: 800, letterSpacing: '0.05em',
           }}>
-            {ticket.order_type === 'delivery' ? '🛵 DELIVERY' : '🏪 PICKUP'}
+            {ticket.order_type === 'delivery' ? '🛵 ENTREGA' : '🏪 RETIRADA'}
           </div>
         </div>
 
         {/* Customer */}
         <div style={{ marginBottom: 14, paddingBottom: 14, borderBottom: '1px dashed #ddd' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#888', marginBottom: 6 }}>Customer</div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#888', marginBottom: 6 }}>Cliente</div>
           <div style={{ fontSize: 16, fontWeight: 800, color: '#000', marginBottom: 3 }}>{ticket.customer_name}</div>
           <div style={{ fontSize: 14, color: '#333' }}>📞 {ticket.customer_phone}</div>
         </div>
@@ -79,7 +79,7 @@ export default function DeliveryTicketPrint() {
         {/* Address */}
         {ticket.order_type === 'delivery' && ticket.address_street && (
           <div style={{ marginBottom: 14, paddingBottom: 14, borderBottom: '1px dashed #ddd' }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#888', marginBottom: 6 }}>Delivery Address</div>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#888', marginBottom: 6 }}>Endereço de Entrega</div>
             <div style={{ fontSize: 14, fontWeight: 700, color: '#000', lineHeight: 1.6 }}>
               {ticket.address_street}, {ticket.address_number}
               {ticket.address_complement && ` — ${ticket.address_complement}`}
@@ -96,7 +96,7 @@ export default function DeliveryTicketPrint() {
 
         {/* Items summary */}
         <div style={{ marginBottom: 14, paddingBottom: 14, borderBottom: '1px dashed #ddd' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#888', marginBottom: 6 }}>Items</div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#888', marginBottom: 6 }}>Itens</div>
           {ticket.items?.map((item, i) => (
             <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 4 }}>
               <span style={{ fontWeight: 600 }}>{item.quantity}× {item.product_name}</span>
@@ -105,7 +105,7 @@ export default function DeliveryTicketPrint() {
           ))}
           {ticket.delivery_fee > 0 && (
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#666', marginTop: 4 }}>
-              <span>Delivery fee</span>
+              <span>Taxa de entrega</span>
               <span>R$ {ticket.delivery_fee?.toFixed(2)}</span>
             </div>
           )}
@@ -117,26 +117,26 @@ export default function DeliveryTicketPrint() {
 
         {/* Payment */}
         <div style={{ marginBottom: 14, paddingBottom: 14, borderBottom: ticket.notes ? '1px dashed #ddd' : 'none' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#888', marginBottom: 6 }}>Payment</div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#888', marginBottom: 6 }}>Pagamento</div>
           <div style={{ fontSize: 15, fontWeight: 800, color: '#000' }}>
             {PAYMENT_LABELS[ticket.payment_method] || ticket.payment_method}
           </div>
           {ticket.payment_method === 'cash_change' && ticket.change_amount > 0 && (
             <div style={{ fontSize: 14, color: '#c2410c', fontWeight: 800, marginTop: 5 }}>
-              ⚠ CHANGE FOR: R$ {ticket.change_amount?.toFixed(2)}
+              ⚠ TROCO PARA: R$ {ticket.change_amount?.toFixed(2)}
             </div>
           )}
         </div>
 
         {ticket.notes && (
           <div style={{ marginBottom: 14 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#888', marginBottom: 6 }}>Notes</div>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#888', marginBottom: 6 }}>Observações</div>
             <div style={{ fontSize: 13, fontWeight: 600, color: '#333', lineHeight: 1.5, fontStyle: 'italic' }}>{ticket.notes}</div>
           </div>
         )}
 
         <div style={{ borderTop: '2px dashed #ccc', paddingTop: 12, textAlign: 'center', fontSize: 11, color: '#999' }}>
-          Delivery / Logistics Copy
+          Via Entrega / Logística
         </div>
       </div>
 

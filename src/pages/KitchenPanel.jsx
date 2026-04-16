@@ -53,30 +53,30 @@ export default function KitchenPanel() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <ChefHat style={{ width: 22, height: 22, color: 'var(--purple-600)' }} />
-                Kitchen
+                Cozinha
               </h1>
               {newCount > 0 && (
                 <span style={{ background: 'var(--red-500)', color: '#fff', fontSize: 11, fontWeight: 800, padding: '3px 9px', borderRadius: 'var(--r-full)' }}>
-                  {newCount} new
+                  {newCount} novo{newCount !== 1 ? 's' : ''}
                 </span>
               )}
             </div>
             <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>
-              {kitchenOrders.length} order{kitchenOrders.length !== 1 ? 's' : ''}
+              {kitchenOrders.length} pedido{kitchenOrders.length !== 1 ? 's' : ''}
             </p>
           </div>
         </div>
         <button onClick={() => refetch()} style={{ background: '#fff', border: '1.5px solid var(--gray-150)', borderRadius: 'var(--r-sm)', padding: '8px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--gray-600)', fontWeight: 600 }}>
-          <RefreshCw style={{ width: 14, height: 14 }} /> Refresh
+          <RefreshCw style={{ width: 14, height: 14 }} /> Atualizar
         </button>
       </div>
 
       <div className="tab-bar" style={{ marginBottom: 20 }}>
         {[
-          { key: 'active', label: '🔥 Active' },
-          { key: 'ready', label: '✅ Ready' },
-          { key: 'all', label: 'All' },
-          { key: 'cancelled', label: 'Cancelled' },
+          { key: 'active', label: '🔥 Ativos' },
+          { key: 'ready', label: '✅ Prontos' },
+          { key: 'all', label: 'Todos' },
+          { key: 'cancelled', label: 'Cancelados' },
         ].map(tab => (
           <button key={tab.key} className={`tab-item ${filter === tab.key ? 'active' : ''}`}
             onClick={() => setFilter(tab.key)}>
@@ -90,8 +90,8 @@ export default function KitchenPanel() {
       ) : kitchenOrders.length === 0 ? (
         <div className="empty-state">
           <ChefHat />
-          <h3>All clear!</h3>
-          <p>No orders in this queue right now.</p>
+          <h3>Tudo limpo!</h3>
+          <p>Nenhum pedido nesta fila agora.</p>
         </div>
       ) : (
         kitchenOrders.map(order => {
@@ -103,7 +103,7 @@ export default function KitchenPanel() {
                   <div className="ticket-number">{order.order_number}</div>
                   <div className="ticket-time">
                     <Clock style={{ width: 12, height: 12, display: 'inline', marginRight: 4 }} />
-                    {moment(order.created_date).format('HH:mm')} · {order.order_type === 'delivery' ? '🛵 Delivery' : '🏪 Pickup'}
+                    {moment(order.created_date).format('HH:mm')} · {order.order_type === 'delivery' ? '🛵 Entrega' : '🏪 Retirada'}
                   </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
@@ -131,7 +131,7 @@ export default function KitchenPanel() {
                 ))}
                 {order.notes && (
                   <div style={{ marginTop: 14, padding: '10px 14px', background: '#fefce8', border: '1px solid #fef08a', borderRadius: 'var(--r-sm)', fontSize: 13, color: '#854d0e', fontWeight: 500 }}>
-                    ⚠️ <strong>Order note:</strong> {order.notes}
+                    ⚠️ <strong>Obs. do pedido:</strong> {order.notes}
                   </div>
                 )}
               </div>
@@ -141,24 +141,24 @@ export default function KitchenPanel() {
                   <>
                     <button className="btn btn-warning btn-sm" style={{ flex: 1 }}
                       onClick={() => updateStatus.mutate({ id: order.id, status: 'awaiting_confirmation' })}>
-                      ✓ Confirm
+                      ✓ Confirmar
                     </button>
                     <button className="btn btn-primary btn-sm" style={{ flex: 1 }}
                       onClick={() => updateStatus.mutate({ id: order.id, status: 'in_preparation' })}>
-                      🍳 Start Prep
+                      🍳 Iniciar Preparo
                     </button>
                   </>
                 )}
                 {order.status === 'in_preparation' && (
                   <button className="btn btn-success btn-sm" style={{ flex: 1 }}
                     onClick={() => updateStatus.mutate({ id: order.id, status: 'ready' })}>
-                    ✅ Mark as Ready
+                    ✅ Marcar como Pronto
                   </button>
                 )}
                 {!['cancelled', 'delivered', 'picked_up', 'ready'].includes(order.status) && (
                   <button className="btn btn-danger btn-sm"
                     onClick={() => updateStatus.mutate({ id: order.id, status: 'cancelled' })}>
-                    Cancel
+                    Cancelar
                   </button>
                 )}
               </div>

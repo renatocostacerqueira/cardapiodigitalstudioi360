@@ -56,11 +56,11 @@ function TypeOption({ value, current, onChange, icon: Icon, label, sublabel }) {
 }
 
 const PAYMENT_OPTIONS = [
-  { value: 'cash', label: 'Cash', icon: Banknote },
-  { value: 'cash_change', label: 'Cash (need change)', icon: Banknote },
+  { value: 'cash', label: 'Dinheiro', icon: Banknote },
+  { value: 'cash_change', label: 'Dinheiro (preciso de troco)', icon: Banknote },
   { value: 'pix', label: 'PIX', icon: QrCode },
-  { value: 'debit', label: 'Debit Card', icon: CreditCard },
-  { value: 'credit', label: 'Credit Card', icon: CreditCard },
+  { value: 'debit', label: 'Cartão de Débito', icon: CreditCard },
+  { value: 'credit', label: 'Cartão de Crédito', icon: CreditCard },
 ];
 
 export default function Checkout() {
@@ -186,31 +186,31 @@ export default function Checkout() {
             <ArrowLeft style={{ width: 20, height: 20 }} />
           </button>
           <div>
-            <h1 className="page-title">Checkout</h1>
-            <p className="page-subtitle">Review and confirm your order</p>
+            <h1 className="page-title">Finalizar Pedido</h1>
+            <p className="page-subtitle">Revise e confirme seu pedido</p>
           </div>
         </div>
 
         {/* Customer Info */}
-        <SectionCard title="Your Information">
+        <SectionCard title="Seus Dados">
           <div className="input-group">
-            <label className="input-label" htmlFor="cname">Full Name</label>
-            <input id="cname" className="input-field" placeholder="John Doe"
+            <label className="input-label" htmlFor="cname">Nome Completo</label>
+            <input id="cname" className="input-field" placeholder="João Silva"
               value={customerName} onChange={e => setCustomerName(e.target.value)} />
           </div>
           <div className="input-group" style={{ marginBottom: 0 }}>
-            <label className="input-label" htmlFor="cphone">Phone Number</label>
+            <label className="input-label" htmlFor="cphone">Telefone / WhatsApp</label>
             <input id="cphone" className="input-field" placeholder="(00) 00000-0000"
               value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} />
           </div>
         </SectionCard>
 
         {/* Order Type */}
-        <SectionCard title="How would you like to receive it?">
+        <SectionCard title="Como deseja receber?">
           <TypeOption value="delivery" current={orderType} onChange={setOrderType}
-            icon={Truck} label="Delivery" sublabel={`+ R$ ${deliveryFee.toFixed(2)} delivery fee`} />
+            icon={Truck} label="Entrega" sublabel={`+ R$ ${deliveryFee.toFixed(2)} taxa de entrega`} />
           <TypeOption value="pickup" current={orderType} onChange={setOrderType}
-            icon={Store} label="Pickup" sublabel="Pick up at the restaurant" />
+            icon={Store} label="Retirada" sublabel="Retire no restaurante" />
         </SectionCard>
 
         {/* Address */}
@@ -219,40 +219,40 @@ export default function Checkout() {
             <div className="card-body">
               <h3 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <MapPin style={{ width: 17, height: 17, color: 'var(--purple-500)' }} />
-                Delivery Address
+                Endereço de Entrega
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
                 <div className="input-group">
-                  <label className="input-label">Street *</label>
-                  <input className="input-field" placeholder="Street name"
+                  <label className="input-label">Rua *</label>
+                  <input className="input-field" placeholder="Nome da rua"
                     value={address.street} onChange={e => setAddress({ ...address, street: e.target.value })} />
                 </div>
                 <div className="input-group">
-                  <label className="input-label">Number *</label>
+                  <label className="input-label">Número *</label>
                   <input className="input-field" placeholder="123"
                     value={address.number} onChange={e => setAddress({ ...address, number: e.target.value })} />
                 </div>
               </div>
               <div className="input-group">
-                <label className="input-label">Complement</label>
-                <input className="input-field" placeholder="Apt, floor, suite..."
+                <label className="input-label">Complemento</label>
+                <input className="input-field" placeholder="Apto, bloco, andar..."
                   value={address.complement} onChange={e => setAddress({ ...address, complement: e.target.value })} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div className="input-group">
-                  <label className="input-label">Neighborhood *</label>
-                  <input className="input-field" placeholder="Neighborhood"
+                  <label className="input-label">Bairro *</label>
+                  <input className="input-field" placeholder="Bairro"
                     value={address.neighborhood} onChange={e => setAddress({ ...address, neighborhood: e.target.value })} />
                 </div>
                 <div className="input-group">
-                  <label className="input-label">City *</label>
-                  <input className="input-field" placeholder="City"
+                  <label className="input-label">Cidade *</label>
+                  <input className="input-field" placeholder="Cidade"
                     value={address.city} onChange={e => setAddress({ ...address, city: e.target.value })} />
                 </div>
               </div>
               <div className="input-group" style={{ marginBottom: 0 }}>
-                <label className="input-label">Reference Point</label>
-                <input className="input-field" placeholder="Near the park, beside the pharmacy..."
+                <label className="input-label">Ponto de Referência</label>
+                <input className="input-field" placeholder="Próximo ao parque, ao lado da farmácia..."
                   value={address.reference} onChange={e => setAddress({ ...address, reference: e.target.value })} />
               </div>
             </div>
@@ -260,7 +260,7 @@ export default function Checkout() {
         )}
 
         {/* Payment */}
-        <SectionCard title="Payment Method">
+        <SectionCard title="Forma de Pagamento">
           {PAYMENT_OPTIONS.map(opt => (
             <TypeOption
               key={opt.value}
@@ -273,18 +273,18 @@ export default function Checkout() {
           ))}
           {paymentMethod === 'cash_change' && (
             <div className="input-group animate-fade-in" style={{ marginTop: 6, marginBottom: 0 }}>
-              <label className="input-label" htmlFor="change">Change for how much? *</label>
-              <input id="change" className="input-field" type="number" placeholder="e.g. 50.00"
+              <label className="input-label" htmlFor="change">Troco para quanto? *</label>
+              <input id="change" className="input-field" type="number" placeholder="ex: 50.00"
                 value={changeAmount} onChange={e => setChangeAmount(e.target.value)} />
             </div>
           )}
         </SectionCard>
 
         {/* Notes */}
-        <SectionCard title="Order Notes">
+        <SectionCard title="Observações do Pedido">
           <textarea
             className="input-field"
-            placeholder="Any special instructions for the restaurant? (e.g. ring the bell, leave at door...)"
+            placeholder="Alguma instrução especial? (ex: toque a campainha, deixe na portaria...)"
             value={notes}
             onChange={e => setNotes(e.target.value)}
             rows={3}
@@ -295,7 +295,7 @@ export default function Checkout() {
         {/* Summary */}
         <div className="card" style={{ marginBottom: 24 }}>
           <div className="card-body">
-            <h3 className="section-title">Order Summary</h3>
+            <h3 className="section-title">Resumo do Pedido</h3>
             {items.map((item, i) => (
               <div className="summary-row" key={i}>
                 <span style={{ color: 'var(--gray-500)' }}>{item.quantity}× {item.product_name}</span>
@@ -304,12 +304,13 @@ export default function Checkout() {
             ))}
             {orderType === 'delivery' && (
               <div className="summary-row">
-                <span style={{ color: 'var(--gray-400)' }}>Delivery Fee</span>
+                <span style={{ color: 'var(--gray-400)' }}>Taxa de Entrega</span>
                 <span>R$ {deliveryFee.toFixed(2)}</span>
               </div>
             )}
             <div className="summary-row total">
               <span>Total</span>
+
               <span style={{ color: 'var(--purple-600)' }}>R$ {grandTotal.toFixed(2)}</span>
             </div>
           </div>
@@ -321,13 +322,13 @@ export default function Checkout() {
           disabled={!canSubmit || submitting}
           style={{ borderRadius: 'var(--r-full)', fontWeight: 800, fontSize: 16 }}
         >
-          {submitting ? 'Placing Order…' : 'Place Order'}
+          {submitting ? 'Enviando Pedido…' : 'Fazer Pedido'}
           {!submitting && <ChevronRight style={{ width: 18, height: 18 }} />}
         </button>
 
         {!canSubmit && (
           <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--gray-400)', marginTop: 10 }}>
-            Please fill all required fields to continue
+            Preencha todos os campos obrigatórios para continuar
           </p>
         )}
       </div>

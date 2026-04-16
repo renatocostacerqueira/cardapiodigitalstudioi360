@@ -74,10 +74,10 @@ export default function MenuHome() {
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28, paddingTop: 12 }}>
           <div>
             <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--purple-400)', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 6 }}>
-              Good food, fast delivery
+              Boa comida, entrega rápida
             </p>
             <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--gray-900)', letterSpacing: '-0.04em', lineHeight: 1.15 }}>
-              What would you<br />like to eat? 🍽️
+              O que você quer<br />comer hoje? 🍽️
             </h1>
           </div>
           <div style={{
@@ -90,7 +90,7 @@ export default function MenuHome() {
           </div>
         </div>
 
-        <SearchBar value={search} onChange={setSearch} placeholder="Search dishes..." />
+        <SearchBar value={search} onChange={setSearch} placeholder="Buscar pratos..." />
 
         <CategoryPills
           categories={categories}
@@ -103,16 +103,16 @@ export default function MenuHome() {
         ) : filtered.length === 0 ? (
           <div className="empty-state">
             <UtensilsCrossed />
-            <h3>No items found</h3>
-            <p>Try a different search or category</p>
+            <h3>Nenhum item encontrado</h3>
+            <p>Tente uma busca diferente ou outra categoria</p>
           </div>
         ) : (
           <>
             {!search && !activeCategory && featured.length > 0 && (
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                  <h2 className="section-title" style={{ margin: 0 }}>Popular Now</h2>
-                  <span style={{ fontSize: 12, color: 'var(--purple-500)', fontWeight: 600, cursor: 'pointer' }}>See all</span>
+                  <h2 className="section-title" style={{ margin: 0 }}>Mais Pedidos</h2>
+                  <span style={{ fontSize: 12, color: 'var(--purple-500)', fontWeight: 600, cursor: 'pointer' }}>Ver todos</span>
                 </div>
                 <div className="product-grid">
                   {featured.map(p => <ProductCard key={p.id} product={p} />)}
@@ -124,7 +124,7 @@ export default function MenuHome() {
               <h2 className="section-title" style={{ margin: 0 }}>
                 {activeCategory
                   ? categories.find(c => c.id === activeCategory)?.name || 'Items'
-                  : (search ? 'Results' : 'All Items')}
+                  : (search ? 'Resultados' : 'Todos os Itens')}
               </h2>
               <span style={{ fontSize: 12, color: 'var(--gray-400)', fontWeight: 500 }}>
                 {filtered.length} items

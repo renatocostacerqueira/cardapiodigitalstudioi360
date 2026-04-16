@@ -40,8 +40,8 @@ export default function MyOrders() {
       <div className="page-container">
         <div className="page-header">
           <div>
-            <h1 className="page-title">My Orders</h1>
-            <p className="page-subtitle">Track and reorder</p>
+            <h1 className="page-title">Meus Pedidos</h1>
+            <p className="page-subtitle">Acompanhe e repita</p>
           </div>
         </div>
 
@@ -50,10 +50,10 @@ export default function MyOrders() {
         ) : orders.length === 0 ? (
           <div className="empty-state">
             <ClipboardList />
-            <h3>No orders yet</h3>
-            <p>Your order history will appear here</p>
+            <h3>Nenhum pedido ainda</h3>
+            <p>Seu histórico de pedidos aparecerá aqui</p>
             <button className="btn btn-primary" style={{ marginTop: 20 }} onClick={() => navigate('/')}>
-              Browse Menu
+              Ver Cardápio
             </button>
           </div>
         ) : (
@@ -63,7 +63,7 @@ export default function MyOrders() {
               <>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                   <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--green-500)', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
-                  <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-700)' }}>Active Orders</h2>
+                  <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-700)' }}>Pedidos Ativos</h2>
                 </div>
                 {activeOrders.map(order => (
                   <OrderCard key={order.id} order={order} onReorder={handleReorder} navigate={navigate} isActive />
@@ -76,7 +76,7 @@ export default function MyOrders() {
             {pastOrders.length > 0 && (
               <>
                 {activeOrders.length > 0 && (
-                  <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-600)', marginBottom: 12 }}>Order History</h2>
+                  <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-600)', marginBottom: 12 }}>Histórico de Pedidos</h2>
                 )}
                 {pastOrders.map(order => (
                   <OrderCard key={order.id} order={order} onReorder={handleReorder} navigate={navigate} />
@@ -130,7 +130,7 @@ function OrderCard({ order, onReorder, navigate, isActive }) {
                 fontSize: 12, fontWeight: 700, cursor: 'pointer',
               }}
             >
-              <RotateCcw style={{ width: 12, height: 12 }} /> Reorder
+              <RotateCcw style={{ width: 12, height: 12 }} /> Repetir
             </button>
             {isActive && (
               <button
@@ -142,7 +142,7 @@ function OrderCard({ order, onReorder, navigate, isActive }) {
                   fontSize: 12, fontWeight: 700, cursor: 'pointer',
                 }}
               >
-                Track <ChevronRight style={{ width: 13, height: 13 }} />
+                Rastrear <ChevronRight style={{ width: 13, height: 13 }} />
               </button>
             )}
           </div>

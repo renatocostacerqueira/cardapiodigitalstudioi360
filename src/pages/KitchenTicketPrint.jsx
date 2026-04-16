@@ -28,7 +28,7 @@ export default function KitchenTicketPrint() {
           <ArrowLeft style={{ width: 20, height: 20 }} />
         </button>
         <button className="btn btn-primary btn-sm" onClick={() => window.print()}>
-          <Printer style={{ width: 16, height: 16 }} /> Print Kitchen Ticket
+          <Printer style={{ width: 16, height: 16 }} /> Imprimir Ticket Cozinha
         </button>
       </div>
 
@@ -44,7 +44,7 @@ export default function KitchenTicketPrint() {
       }}>
         <div style={{ textAlign: 'center', borderBottom: '2px dashed #ccc', paddingBottom: 16, marginBottom: 16 }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#666', marginBottom: 6 }}>
-            *** KITCHEN TICKET ***
+            *** TICKET COZINHA ***
           </div>
           <div style={{ fontSize: 26, fontWeight: 900, letterSpacing: '0.02em', color: '#000' }}>
             {ticket.order_number}
@@ -59,7 +59,7 @@ export default function KitchenTicketPrint() {
             padding: '3px 12px', borderRadius: 999,
             fontSize: 12, fontWeight: 800, letterSpacing: '0.05em',
           }}>
-            {ticket.order_type === 'delivery' ? '🛵 DELIVERY' : '🏪 PICKUP'}
+            {ticket.order_type === 'delivery' ? '🛵 ENTREGA' : '🏪 RETIRADA'}
           </div>
         </div>
 
@@ -88,7 +88,7 @@ export default function KitchenTicketPrint() {
         {ticket.notes && (
           <div style={{ borderTop: '2px dashed #ccc', paddingTop: 14, marginBottom: 14 }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#888', marginBottom: 6 }}>
-              Order Notes
+              Observações do Pedido
             </div>
             <div style={{ fontSize: 14, color: '#000', fontWeight: 600, lineHeight: 1.5 }}>
               {ticket.notes}
@@ -97,7 +97,7 @@ export default function KitchenTicketPrint() {
         )}
 
         <div style={{ borderTop: '2px dashed #ccc', paddingTop: 12, textAlign: 'center', fontSize: 11, color: '#999' }}>
-          Kitchen Copy — Do Not Deliver
+          Via Cozinha — Não Entregar
         </div>
       </div>
 

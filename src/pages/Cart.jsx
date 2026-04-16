@@ -101,7 +101,7 @@ export default function Cart() {
             <ArrowLeft style={{ width: 20, height: 20 }} />
           </button>
           <div>
-            <h1 className="page-title">Your Cart</h1>
+            <h1 className="page-title">Seu Carrinho</h1>
             <p className="page-subtitle">{items.length} item{items.length !== 1 ? 's' : ''}</p>
           </div>
         </div>
@@ -109,10 +109,10 @@ export default function Cart() {
         {items.length === 0 ? (
           <div className="empty-state">
             <ShoppingCart />
-            <h3>Your cart is empty</h3>
-            <p>Browse the menu and add something delicious</p>
+            <h3>Seu carrinho está vazio</h3>
+            <p>Explore o cardápio e adicione algo delicioso</p>
             <button className="btn btn-primary" style={{ marginTop: 24 }} onClick={() => navigate('/')}>
-              Browse Menu
+              Ver Cardápio
             </button>
           </div>
         ) : (
@@ -136,7 +136,7 @@ export default function Cart() {
             {/* Order Summary */}
             <div className="card" style={{ marginBottom: 24 }}>
               <div className="card-body">
-                <h3 className="section-title">Order Summary</h3>
+                <h3 className="section-title">Resumo do Pedido</h3>
                 {items.map((item, i) => (
                   <div className="summary-row" key={i}>
                     <span style={{ color: 'var(--gray-500)' }}>{item.quantity}× {item.product_name}</span>
@@ -156,7 +156,7 @@ export default function Cart() {
               onClick={() => navigate('/checkout')}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
             >
-              Proceed to Checkout
+              Finalizar Pedido
               <ChevronRight style={{ width: 18, height: 18 }} />
             </button>
           </>

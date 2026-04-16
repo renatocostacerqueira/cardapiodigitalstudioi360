@@ -6,7 +6,7 @@ import StatusBadge from '../components/shared/StatusBadge';
 import OrderTracker from '../components/order/OrderTracker';
 
 const PAYMENT_LABELS = {
-  cash: 'Cash', cash_change: 'Cash (with change)', pix: 'PIX', debit: 'Debit Card', credit: 'Credit Card',
+  cash: 'Dinheiro', cash_change: 'Dinheiro (com troco)', pix: 'PIX', debit: 'Cartão de Débito', credit: 'Cartão de Crédito',
 };
 
 export default function OrderConfirmation() {
@@ -56,10 +56,10 @@ export default function OrderConfirmation() {
             <CheckCircle />
           </div>
           <h1 style={{ fontSize: 26, fontWeight: 900, color: 'var(--gray-900)', letterSpacing: '-0.03em', marginBottom: 6 }}>
-            {isDelivered ? 'Enjoy your meal! 🎉' : 'Order Confirmed!'}
+            {isDelivered ? 'Bom apetite! 🎉' : 'Pedido Confirmado!'}
           </h1>
           <p style={{ fontSize: 14, color: 'var(--gray-400)', marginBottom: 14 }}>
-            {isDelivered ? 'Your order has been completed' : 'Your order has been received and is being processed'}
+            {isDelivered ? 'Seu pedido foi concluído' : 'Seu pedido foi recebido e está sendo processado'}
           </p>
           <div style={{
             display: 'inline-block', fontSize: 18, fontWeight: 800, color: 'var(--purple-600)',
@@ -82,9 +82,9 @@ export default function OrderConfirmation() {
             boxShadow: '0 8px 24px rgba(109,40,217,0.35)',
           }}>
             <div style={{ fontSize: 28, marginBottom: 6 }}>🛵</div>
-            <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 4 }}>Your order is on the way!</div>
+            <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 4 }}>Seu pedido está a caminho!</div>
             <div style={{ fontSize: 13, opacity: 0.85 }}>
-              Our driver is heading to your address — estimated arrival ~{order.avg_prep_time || 30} min
+              Nosso entregador está indo até você — chegada estimada em ~{order.avg_prep_time || 30} min
             </div>
           </div>
         )}
@@ -94,10 +94,10 @@ export default function OrderConfirmation() {
           <div className="card" style={{ marginTop: 20, marginBottom: 14 }}>
             <div className="card-body">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                <h3 className="section-title" style={{ margin: 0 }}>Live Tracking</h3>
+                <h3 className="section-title" style={{ margin: 0 }}>Acompanhamento ao Vivo</h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--purple-500)', fontWeight: 700 }}>
                   <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--green-500)', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
-                  Live
+                  Ao Vivo
                 </div>
               </div>
               <OrderTracker status={order.status} orderType={order.order_type} />
@@ -121,10 +121,10 @@ export default function OrderConfirmation() {
               </div>
               <div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--gray-900)' }}>
-                  {order.order_type === 'delivery' ? 'Delivery Order' : 'Pickup Order'}
+                  {order.order_type === 'delivery' ? 'Pedido para Entrega' : 'Pedido para Retirada'}
                 </div>
                 <div style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>
-                  {order.order_type === 'delivery' ? "We'll deliver to your address" : 'Come pick up at the restaurant'}
+                  {order.order_type === 'delivery' ? 'Entregaremos no seu endereço' : 'Retire no restaurante'}
                 </div>
               </div>
               <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
@@ -141,7 +141,7 @@ export default function OrderConfirmation() {
                 <div className="info-row" style={{ paddingTop: 0 }}>
                   <MapPin style={{ width: 16, height: 16, color: 'var(--gray-300)' }} />
                   <div>
-                    <div className="info-label">Delivery Address</div>
+                    <div className="info-label">Endereço de Entrega</div>
                     <div className="info-value">
                       {order.address_street}, {order.address_number}
                       {order.address_complement && ` — ${order.address_complement}`}
@@ -163,12 +163,12 @@ export default function OrderConfirmation() {
             <div className="info-row" style={{ paddingTop: 0, paddingBottom: 0 }}>
               <CreditCard style={{ width: 16, height: 16, color: 'var(--gray-300)' }} />
               <div style={{ flex: 1 }}>
-                <div className="info-label">Payment Method</div>
+                <div className="info-label">Forma de Pagamento</div>
                 <div className="info-value">{PAYMENT_LABELS[order.payment_method] || order.payment_method}</div>
               </div>
               {order.payment_method === 'cash_change' && order.change_amount > 0 && (
                 <div style={{ background: 'var(--orange-50)', border: '1px solid #fed7aa', borderRadius: 'var(--r-sm)', padding: '6px 12px', fontSize: 13, color: '#c2410c', fontWeight: 700 }}>
-                  Change for R$ {order.change_amount.toFixed(2)}
+                  Troco para R$ {order.change_amount.toFixed(2)}
                 </div>
               )}
             </div>
@@ -178,7 +178,7 @@ export default function OrderConfirmation() {
         {/* Items */}
         <div className="card" style={{ marginBottom: 24 }}>
           <div className="card-body">
-            <h3 className="section-title">Your Order</h3>
+            <h3 className="section-title">Seu Pedido</h3>
             {order.items?.map((item, i) => (
               <div key={i} style={{ paddingBottom: i < order.items.length - 1 ? 12 : 0, marginBottom: i < order.items.length - 1 ? 12 : 0, borderBottom: i < order.items.length - 1 ? '1px solid var(--gray-100)' : 'none' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -196,7 +196,7 @@ export default function OrderConfirmation() {
             <div className="divider" />
             {order.delivery_fee > 0 && (
               <div className="summary-row">
-                <span style={{ color: 'var(--gray-400)' }}>Delivery Fee</span>
+                <span style={{ color: 'var(--gray-400)' }}>Taxa de Entrega</span>
                 <span>R$ {order.delivery_fee?.toFixed(2)}</span>
               </div>
             )}
@@ -208,10 +208,10 @@ export default function OrderConfirmation() {
         </div>
 
         <button className="btn btn-primary btn-lg" onClick={() => navigate('/')} style={{ borderRadius: 'var(--r-full)', fontWeight: 800 }}>
-          <Home style={{ width: 18, height: 18 }} /> Back to Menu
+          <Home style={{ width: 18, height: 18 }} /> Voltar ao Cardápio
         </button>
         <button className="btn btn-outline btn-lg" onClick={() => navigate('/orders')} style={{ marginTop: 10, borderRadius: 'var(--r-full)' }}>
-          View My Orders
+          Ver Meus Pedidos
         </button>
       </div>
       <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }`}</style>

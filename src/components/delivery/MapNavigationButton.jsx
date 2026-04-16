@@ -38,7 +38,7 @@ export default function MapNavigationButton({ order, compact = false }) {
         }}
       >
         <Navigation style={{ width: 13, height: 13 }} />
-        Navigate
+        Navegar
         <ExternalLink style={{ width: 11, height: 11, opacity: 0.6 }} />
       </a>
     );
@@ -76,7 +76,7 @@ export default function MapNavigationButton({ order, compact = false }) {
         }}
       >
         <Navigation style={{ width: 16, height: 16 }} />
-        Open Route in Maps
+        Abrir Rota no Maps
         <ExternalLink style={{ width: 14, height: 14, opacity: 0.7 }} />
       </a>
     </div>

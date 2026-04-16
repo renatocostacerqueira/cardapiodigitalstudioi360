@@ -10,19 +10,19 @@ import StatusBadge from '../../components/shared/StatusBadge';
 import moment from 'moment';
 
 const PAYMENT_LABELS = {
-  cash: 'Cash', cash_change: 'Cash w/ Change', pix: 'PIX', debit: 'Debit', credit: 'Credit',
+  cash: 'Dinheiro', cash_change: 'Dinheiro c/ Troco', pix: 'PIX', debit: 'Débito', credit: 'Crédito',
 };
 
 const STATUSES = [
-  { value: '', label: 'All Statuses' },
-  { value: 'new', label: 'New Order' },
-  { value: 'awaiting_confirmation', label: 'Awaiting Confirmation' },
-  { value: 'in_preparation', label: 'In Preparation' },
-  { value: 'ready', label: 'Ready' },
-  { value: 'out_for_delivery', label: 'Out for Delivery' },
-  { value: 'delivered', label: 'Delivered' },
-  { value: 'picked_up', label: 'Picked Up' },
-  { value: 'cancelled', label: 'Cancelled' },
+  { value: '', label: 'Todos os Status' },
+  { value: 'new', label: 'Novo Pedido' },
+  { value: 'awaiting_confirmation', label: 'Aguardando Confirmação' },
+  { value: 'in_preparation', label: 'Em Preparo' },
+  { value: 'ready', label: 'Pronto' },
+  { value: 'out_for_delivery', label: 'Saiu para Entrega' },
+  { value: 'delivered', label: 'Entregue' },
+  { value: 'picked_up', label: 'Retirado' },
+  { value: 'cancelled', label: 'Cancelado' },
 ];
 
 const STATUS_FLOW = [
@@ -66,7 +66,7 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
         <div style={{ padding: '20px 24px' }}>
           {/* Customer */}
           <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 10 }}>Customer</div>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 10 }}>Cliente</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
               <User style={{ width: 15, height: 15, color: 'var(--gray-300)' }} />
               <span style={{ fontWeight: 600, color: 'var(--gray-800)' }}>{order.customer_name}</span>
@@ -85,7 +85,7 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
                 : <Store style={{ width: 16, height: 16, color: 'var(--green-600)' }} />
               }
               <span style={{ fontWeight: 700, fontSize: 14, color: order.order_type === 'delivery' ? 'var(--purple-700)' : 'var(--green-700)' }}>
-                {order.order_type === 'delivery' ? 'Delivery' : 'Pickup'}
+                {order.order_type === 'delivery' ? 'Entrega' : 'Retirada'}
               </span>
             </div>
             {order.order_type === 'delivery' && order.address_street && (
@@ -101,7 +101,7 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
 
           {/* Items */}
           <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 10 }}>Items</div>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 10 }}>Itens</div>
             {order.items?.map((item, i) => (
               <div key={i} style={{ paddingBottom: 10, marginBottom: 10, borderBottom: i < order.items.length - 1 ? '1px solid var(--gray-100)' : 'none' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -118,13 +118,14 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
             ))}
             <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 8, borderTop: '2px solid var(--gray-100)' }}>
               <span style={{ fontWeight: 800, color: 'var(--gray-900)' }}>Total</span>
+
               <span style={{ fontWeight: 900, color: 'var(--purple-600)', fontSize: 17 }}>R$ {order.total_price?.toFixed(2)}</span>
             </div>
           </div>
 
           {/* Payment */}
           <div style={{ marginBottom: 20, padding: 14, borderRadius: 'var(--r-md)', background: 'var(--gray-50)', border: '1px solid var(--gray-150)' }}>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 8 }}>Payment</div>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 8 }}>Pagamento</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <CreditCard style={{ width: 15, height: 15, color: 'var(--gray-400)' }} />
               <span style={{ fontWeight: 700, color: 'var(--gray-800)' }}>{PAYMENT_LABELS[order.payment_method] || order.payment_method}</span>
@@ -138,14 +139,14 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
 
           {order.notes && (
             <div style={{ marginBottom: 20, padding: 14, borderRadius: 'var(--r-md)', background: '#fefce8', border: '1px solid #fef08a' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#a16207', marginBottom: 6 }}>Order Notes</div>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#a16207', marginBottom: 6 }}>Observações do Pedido</div>
               <div style={{ fontSize: 13, color: '#854d0e', fontStyle: 'italic' }}>{order.notes}</div>
             </div>
           )}
 
           {/* Status Update */}
           <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: 18 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 10 }}>Update Status</div>
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 10 }}>Atualizar Status</div>
             <div style={{ display: 'flex', gap: 8 }}>
               <select
                 className="input-field"
@@ -162,7 +163,7 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
                 disabled={newStatus === order.status}
                 onClick={() => { onUpdateStatus(order.id, newStatus); onClose(); }}
               >
-                Update
+                Atualizar
               </button>
             </div>
           </div>
@@ -211,8 +212,8 @@ export default function AdminOrders() {
             <ArrowLeft style={{ width: 20, height: 20 }} />
           </button>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>All Orders</h1>
-            <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>{orders.length} total orders</p>
+            <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>Todos os Pedidos</h1>
+            <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>{orders.length} pedidos no total</p>
           </div>
         </div>
       </div>
@@ -223,7 +224,7 @@ export default function AdminOrders() {
           <Search className="search-bar-icon" />
           <input
             className="input-field"
-            placeholder="Search order # or customer..."
+            placeholder="Buscar por pedido # ou cliente..."
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -243,13 +244,13 @@ export default function AdminOrders() {
       {/* Quick counts */}
       <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, marginBottom: 20 }}>
         {[
-          { key: '', label: 'All', color: 'var(--gray-600)' },
-          { key: 'new', label: 'New', color: 'var(--blue-500)' },
-          { key: 'in_preparation', label: 'Preparing', color: 'var(--orange-500)' },
-          { key: 'ready', label: 'Ready', color: 'var(--green-500)' },
-          { key: 'out_for_delivery', label: 'Delivering', color: 'var(--purple-600)' },
-          { key: 'delivered', label: 'Delivered', color: 'var(--gray-500)' },
-          { key: 'cancelled', label: 'Cancelled', color: 'var(--red-500)' },
+          { key: '', label: 'Todos', color: 'var(--gray-600)' },
+          { key: 'new', label: 'Novo', color: 'var(--blue-500)' },
+          { key: 'in_preparation', label: 'Em Preparo', color: 'var(--orange-500)' },
+          { key: 'ready', label: 'Pronto', color: 'var(--green-500)' },
+          { key: 'out_for_delivery', label: 'Em Entrega', color: 'var(--purple-600)' },
+          { key: 'delivered', label: 'Entregue', color: 'var(--gray-500)' },
+          { key: 'cancelled', label: 'Cancelado', color: 'var(--red-500)' },
         ].map(item => (
           <button
             key={item.key}
@@ -272,8 +273,8 @@ export default function AdminOrders() {
         <div className="loading-container"><div className="spinner" /></div>
       ) : filtered.length === 0 ? (
         <div className="empty-state">
-          <h3>No orders found</h3>
-          <p>Try adjusting your filters</p>
+          <h3>Nenhum pedido encontrado</h3>
+          <p>Tente ajustar os filtros</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -306,7 +307,7 @@ export default function AdminOrders() {
                   <div style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 2 }}>
                     {moment(order.created_date).format('DD/MM HH:mm')} · {PAYMENT_LABELS[order.payment_method] || ''}
                     {order.payment_method === 'cash_change' && order.change_amount > 0 &&
-                      <span style={{ color: '#c2410c', fontWeight: 700 }}> · Change R$ {order.change_amount?.toFixed(2)}</span>
+                      <span style={{ color: '#c2410c', fontWeight: 700 }}> · Troco R$ {order.change_amount?.toFixed(2)}</span>
                     }
                   </div>
                 </div>

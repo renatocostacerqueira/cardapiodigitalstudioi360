@@ -8,11 +8,11 @@ import StatusBadge from '../components/shared/StatusBadge';
 import moment from 'moment';
 
 const PAYMENT_LABELS = {
-  cash: 'Cash',
-  cash_change: 'Cash (with change)',
+  cash: 'Dinheiro',
+  cash_change: 'Dinheiro (com troco)',
   pix: 'PIX',
-  debit: 'Debit Card',
-  credit: 'Credit Card',
+  debit: 'Cartão de Débito',
+  credit: 'Cartão de Crédito',
 };
 
 export default function DeliveryPanel() {
@@ -57,24 +57,24 @@ export default function DeliveryPanel() {
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em', display: 'flex', alignItems: 'center', gap: 8 }}>
               <Truck style={{ width: 22, height: 22, color: 'var(--purple-600)' }} />
-              Delivery
+              Entregas
             </h1>
             <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>
-              {filtered.length} order{filtered.length !== 1 ? 's' : ''}
+              {filtered.length} pedido{filtered.length !== 1 ? 's' : ''}
             </p>
           </div>
         </div>
         <button onClick={() => refetch()} style={{ background: '#fff', border: '1.5px solid var(--gray-150)', borderRadius: 'var(--r-sm)', padding: '8px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--gray-600)', fontWeight: 600 }}>
-          <RefreshCw style={{ width: 14, height: 14 }} /> Refresh
+          <RefreshCw style={{ width: 14, height: 14 }} /> Atualizar
         </button>
       </div>
 
       <div className="tab-bar" style={{ marginBottom: 20 }}>
         {[
-          { key: 'ready', label: '📦 Ready' },
-          { key: 'delivering', label: '🛵 On the Way' },
-          { key: 'done', label: '✅ Done' },
-          { key: 'all', label: 'All' },
+          { key: 'ready', label: '📦 Prontos' },
+          { key: 'delivering', label: '🛵 Saiu' },
+          { key: 'done', label: '✅ Concluídos' },
+          { key: 'all', label: 'Todos' },
         ].map(tab => (
           <button key={tab.key} className={`tab-item ${filter === tab.key ? 'active' : ''}`}
             onClick={() => setFilter(tab.key)}>
@@ -88,8 +88,8 @@ export default function DeliveryPanel() {
       ) : filtered.length === 0 ? (
         <div className="empty-state">
           <Truck />
-          <h3>No orders here</h3>
-          <p>Orders will appear as they become ready</p>
+          <h3>Nenhum pedido aqui</h3>
+          <p>Os pedidos aparecerão quando estiverem prontos</p>
         </div>
       ) : (
         filtered.map(order => {
@@ -101,7 +101,7 @@ export default function DeliveryPanel() {
                   <div className="ticket-number">{order.order_number}</div>
                   <div className="ticket-time">
                     <Clock style={{ width: 12, height: 12, display: 'inline', marginRight: 4 }} />
-                    {moment(order.created_date).format('HH:mm')} · {order.order_type === 'delivery' ? '🛵 Delivery' : '🏪 Pickup'}
+                    {moment(order.created_date).format('HH:mm')} · {order.order_type === 'delivery' ? '🛵 Entrega' : '🏪 Retirada'}
                   </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
@@ -121,14 +121,14 @@ export default function DeliveryPanel() {
                 <div className="info-row" style={{ paddingTop: 0 }}>
                   <User style={{ width: 16, height: 16, color: 'var(--gray-300)' }} />
                   <div>
-                    <div className="info-label">Customer</div>
+                    <div className="info-label">Cliente</div>
                     <div className="info-value" style={{ fontSize: 16 }}>{order.customer_name}</div>
                   </div>
                 </div>
                 <div className="info-row">
                   <Phone style={{ width: 16, height: 16, color: 'var(--gray-300)' }} />
                   <div>
-                    <div className="info-label">Phone</div>
+                    <div className="info-label">Telefone</div>
                     <div className="info-value">
                       <a href={`tel:${order.customer_phone}`} style={{ color: 'var(--purple-600)', textDecoration: 'none', fontWeight: 700 }}>
                         {order.customer_phone}
@@ -144,7 +144,7 @@ export default function DeliveryPanel() {
                     <div className="info-row" style={{ marginBottom: 0 }}>
                       <MapPin style={{ width: 16, height: 16, color: 'var(--gray-300)' }} />
                       <div>
-                        <div className="info-label">Delivery Address</div>
+                        <div className="info-label">Endereço de Entrega</div>
                         <div className="info-value">
                           {order.address_street}, {order.address_number}
                           {order.address_complement && ` — ${order.address_complement}`}
@@ -165,8 +165,8 @@ export default function DeliveryPanel() {
                   <div className="info-row">
                     <MapPin style={{ width: 16, height: 16, color: 'var(--gray-300)' }} />
                     <div>
-                      <div className="info-label">Type</div>
-                      <div className="info-value">Pickup at restaurant</div>
+                      <div className="info-label">Tipo</div>
+                      <div className="info-value">Retirada no restaurante</div>
                     </div>
                   </div>
                 )}
@@ -174,7 +174,7 @@ export default function DeliveryPanel() {
                 <div className="info-row">
                   <CreditCard style={{ width: 16, height: 16, color: 'var(--gray-300)' }} />
                   <div style={{ flex: 1 }}>
-                    <div className="info-label">Payment</div>
+                    <div className="info-label">Pagamento</div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                       <div className="info-value">{PAYMENT_LABELS[order.payment_method] || order.payment_method}</div>
                       <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--purple-600)', letterSpacing: '-0.02em' }}>
@@ -185,7 +185,7 @@ export default function DeliveryPanel() {
                       <div style={{ marginTop: 8, padding: '8px 12px', background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 'var(--r-sm)', display: 'flex', alignItems: 'center', gap: 8 }}>
                         <AlertCircle style={{ width: 15, height: 15, color: 'var(--orange-500)', flexShrink: 0 }} />
                         <span style={{ fontSize: 13, color: '#c2410c', fontWeight: 700 }}>
-                          Needs change for R$ {order.change_amount?.toFixed(2)}
+                          Precisa de troco para R$ {order.change_amount?.toFixed(2)}
                         </span>
                       </div>
                     )}
@@ -196,7 +196,7 @@ export default function DeliveryPanel() {
                   <div className="info-row">
                     <StickyNote style={{ width: 16, height: 16, color: 'var(--gray-300)' }} />
                     <div>
-                      <div className="info-label">Notes</div>
+                      <div className="info-label">Observações</div>
                       <div className="info-value" style={{ fontStyle: 'italic', color: 'var(--gray-600)' }}>{order.notes}</div>
                     </div>
                   </div>
@@ -207,19 +207,19 @@ export default function DeliveryPanel() {
                 {order.status === 'ready' && order.order_type === 'delivery' && (
                   <button className="btn btn-primary btn-sm" style={{ flex: 1 }}
                     onClick={() => updateStatus.mutate({ id: order.id, status: 'out_for_delivery' })}>
-                    🛵 Out for Delivery
+                    🛵 Saiu para Entrega
                   </button>
                 )}
                 {order.status === 'ready' && order.order_type === 'pickup' && (
                   <button className="btn btn-success btn-sm" style={{ flex: 1 }}
                     onClick={() => updateStatus.mutate({ id: order.id, status: 'picked_up' })}>
-                    ✅ Picked Up
+                    ✅ Retirado
                   </button>
                 )}
                 {order.status === 'out_for_delivery' && (
                   <button className="btn btn-success btn-sm" style={{ flex: 1 }}
                     onClick={() => updateStatus.mutate({ id: order.id, status: 'delivered' })}>
-                    ✅ Delivered
+                    ✅ Entregue
                   </button>
                 )}
               </div>

@@ -75,12 +75,12 @@ export default function ManageCategories() {
             <ArrowLeft style={{ width: 20, height: 20 }} />
           </button>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>Categories</h1>
-            <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>{categories.length} categories</p>
+            <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>Categorias</h1>
+            <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>{categories.length} categoria{categories.length !== 1 ? 's' : ''}</p>
           </div>
         </div>
         <button className="btn btn-primary btn-sm" onClick={() => { resetForm(); setShowForm(v => !v); }}>
-          <Plus style={{ width: 16, height: 16 }} /> Add Category
+          <Plus style={{ width: 16, height: 16 }} /> Adicionar Categoria
         </button>
       </div>
 
@@ -89,7 +89,7 @@ export default function ManageCategories() {
           <div className="card-body">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
               <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--gray-900)' }}>
-                {editing ? 'Edit Category' : 'New Category'}
+                {editing ? 'Editar Categoria' : 'Nova Categoria'}
               </h3>
               <button onClick={resetForm} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gray-400)', padding: 4 }}>
                 <X style={{ width: 20, height: 20 }} />
@@ -97,17 +97,17 @@ export default function ManageCategories() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
               <div className="input-group" style={{ margin: 0 }}>
-                <label className="input-label">Name *</label>
-                <input className="input-field" value={form.name} onChange={f('name')} placeholder="Category name" />
+                <label className="input-label">Nome *</label>
+                <input className="input-field" value={form.name} onChange={f('name')} placeholder="Nome da categoria" />
               </div>
               <div className="input-group" style={{ margin: 0 }}>
-                <label className="input-label">Display Order</label>
+                <label className="input-label">Ordem de Exibição</label>
                 <input className="input-field" type="number" value={form.display_order} onChange={f('display_order')} />
               </div>
             </div>
             <div className="input-group" style={{ marginTop: 14 }}>
-              <label className="input-label">Description</label>
-              <textarea className="input-field" value={form.description} onChange={f('description')} rows={2} placeholder="Optional description" />
+              <label className="input-label">Descrição</label>
+              <textarea className="input-field" value={form.description} onChange={f('description')} rows={2} placeholder="Descrição opcional" />
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '14px 0 18px' }}>
               <div
@@ -117,14 +117,14 @@ export default function ManageCategories() {
                 <div style={{ position: 'absolute', top: 2, left: form.active ? 18 : 2, width: 18, height: 18, borderRadius: '50%', background: '#fff', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
               </div>
               <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--gray-700)' }}>
-                {form.active ? 'Active — visible in menu' : 'Inactive — hidden from menu'}
+                {form.active ? 'Ativa — visível no cardápio' : 'Inativa — oculta do cardápio'}
               </span>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               <button className="btn btn-primary btn-sm" onClick={() => saveMutation.mutate(form)} disabled={!form.name || saveMutation.isPending}>
-                {editing ? 'Update' : 'Create'} Category
+                {editing ? 'Atualizar' : 'Criar'} Categoria
               </button>
-              <button className="btn btn-secondary btn-sm" onClick={resetForm}>Cancel</button>
+              <button className="btn btn-secondary btn-sm" onClick={resetForm}>Cancelar</button>
             </div>
           </div>
         </div>
@@ -134,8 +134,8 @@ export default function ManageCategories() {
         <div className="loading-container"><div className="spinner" /></div>
       ) : categories.length === 0 ? (
         <div className="empty-state">
-          <h3>No categories yet</h3>
-          <p>Create your first category to organize the menu</p>
+          <h3>Nenhuma categoria ainda</h3>
+          <p>Crie a primeira categoria para organizar o cardápio</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -168,7 +168,7 @@ export default function ManageCategories() {
                       background: cat.active !== false ? 'var(--green-50)' : 'var(--red-50)',
                       color: cat.active !== false ? 'var(--green-600)' : 'var(--red-500)',
                     }}>
-                      {cat.active !== false ? 'Active' : 'Inactive'}
+                      {cat.active !== false ? 'Ativa' : 'Inativa'}
                     </span>
                     <span style={{ fontSize: 11, color: 'var(--gray-300)', fontWeight: 500 }}>#{cat.display_order || 0}</span>
                   </div>
@@ -181,7 +181,7 @@ export default function ManageCategories() {
                   <button
                     className="back-btn"
                     onClick={() => toggleMutation.mutate({ id: cat.id, active: cat.active === false })}
-                    title={cat.active !== false ? 'Deactivate' : 'Activate'}
+                    title={cat.active !== false ? 'Desativar' : 'Ativar'}
                     style={{ color: cat.active !== false ? 'var(--green-500)' : 'var(--gray-400)', fontSize: 10, fontWeight: 700 }}
                   >
                     {cat.active !== false ? 'ON' : 'OFF'}
@@ -192,7 +192,7 @@ export default function ManageCategories() {
                   <button
                     className="back-btn"
                     style={{ color: 'var(--red-500)' }}
-                    onClick={() => { if (window.confirm(`Delete "${cat.name}"?`)) deleteMutation.mutate(cat.id); }}
+                    onClick={() => { if (window.confirm(`Excluir "${cat.name}"?`)) deleteMutation.mutate(cat.id); }}
                   >
                     <Trash2 style={{ width: 15, height: 15 }} />
                   </button>

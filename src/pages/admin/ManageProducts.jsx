@@ -23,7 +23,7 @@ function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categor
       <div className="card-body">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--gray-900)' }}>
-            {editing ? 'Edit Product' : 'New Product'}
+            {editing ? 'Editar Produto' : 'Novo Produto'}
           </h3>
           <button onClick={onCancel} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gray-400)', padding: 4 }}>
             <X style={{ width: 20, height: 20 }} />
@@ -33,22 +33,22 @@ function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categor
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
           <div>
             <div className="input-group">
-              <label className="input-label">Name *</label>
-              <input className="input-field" value={form.name} onChange={f('name')} placeholder="Product name" />
+              <label className="input-label">Nome *</label>
+              <input className="input-field" value={form.name} onChange={f('name')} placeholder="Nome do produto" />
             </div>
             <div className="input-group">
-              <label className="input-label">Description</label>
-              <textarea className="input-field" value={form.description} onChange={f('description')} placeholder="Description" rows={3} />
+              <label className="input-label">Descrição</label>
+              <textarea className="input-field" value={form.description} onChange={f('description')} placeholder="Descrição" rows={3} />
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div className="input-group">
-                <label className="input-label">Price (R$) *</label>
+                <label className="input-label">Preço (R$) *</label>
                 <input className="input-field" type="number" step="0.01" min="0" value={form.price} onChange={f('price')} placeholder="0.00" />
               </div>
               <div className="input-group">
-                <label className="input-label">Category</label>
+                <label className="input-label">Categoria</label>
                 <select className="input-field" value={form.category_id} onChange={f('category_id')}>
-                  <option value="">No category</option>
+                  <option value="">Sem categoria</option>
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
@@ -57,7 +57,7 @@ function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categor
 
           <div>
             <div className="input-group">
-              <label className="input-label">Product Image</label>
+              <label className="input-label">Imagem do Produto</label>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
                 {form.image ? (
                   <img src={form.image} alt="Preview" style={{ width: 88, height: 88, objectFit: 'cover', borderRadius: 'var(--r-md)', border: '2px solid var(--gray-150)', flexShrink: 0 }} />
@@ -71,13 +71,13 @@ function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categor
                     <input type="file" accept="image/*" onChange={handleUpload} style={{ display: 'none' }} />
                     <span className="btn btn-outline btn-sm" style={{ display: 'inline-flex', pointerEvents: 'none' }}>
                       {uploadingImage ? <Loader2 style={{ width: 13, height: 13, animation: 'spin 0.65s linear infinite' }} /> : null}
-                      {uploadingImage ? 'Uploading…' : 'Upload Image'}
+                      {uploadingImage ? 'Enviando…' : 'Enviar Imagem'}
                     </span>
                   </label>
                   {form.image && (
                     <button onClick={() => setForm(prev => ({ ...prev, image: '' }))}
                       style={{ display: 'block', marginTop: 8, fontSize: 12, color: 'var(--red-500)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
-                      Remove image
+                      Remover imagem
                     </button>
                   )}
                 </div>
@@ -92,7 +92,7 @@ function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categor
                 >
                   <div style={{ position: 'absolute', top: 2, left: form.available ? 18 : 2, width: 18, height: 18, borderRadius: '50%', background: '#fff', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
                 </div>
-                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--gray-700)' }}>Available</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--gray-700)' }}>Disponível</span>
               </label>
               <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
                 <div
@@ -101,15 +101,15 @@ function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categor
                 >
                   <div style={{ position: 'absolute', top: 2, left: form.featured ? 18 : 2, width: 18, height: 18, borderRadius: '50%', background: '#fff', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
                 </div>
-                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--gray-700)' }}>Featured</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--gray-700)' }}>Destaque</span>
               </label>
             </div>
 
             <div style={{ display: 'flex', gap: 8 }}>
               <button className="btn btn-primary btn-sm" onClick={onSave} disabled={!form.name || !form.price || saving}>
-                {saving ? 'Saving...' : editing ? 'Update Product' : 'Create Product'}
+                {saving ? 'Salvando...' : editing ? 'Atualizar Produto' : 'Criar Produto'}
               </button>
-              <button className="btn btn-secondary btn-sm" onClick={onCancel}>Cancel</button>
+              <button className="btn btn-secondary btn-sm" onClick={onCancel}>Cancelar</button>
             </div>
           </div>
         </div>
@@ -190,12 +190,12 @@ export default function ManageProducts() {
             <ArrowLeft style={{ width: 20, height: 20 }} />
           </button>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>Products</h1>
-            <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>{products.length} products total</p>
+            <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>Produtos</h1>
+            <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>{products.length} produtos no total</p>
           </div>
         </div>
         <button className="btn btn-primary btn-sm" onClick={() => { resetForm(); setShowForm(true); }}>
-          <Plus style={{ width: 16, height: 16 }} /> Add Product
+          <Plus style={{ width: 16, height: 16 }} /> Adicionar Produto
         </button>
       </div>
 
@@ -211,10 +211,10 @@ export default function ManageProducts() {
       <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
         <div className="search-bar" style={{ margin: 0, flex: 1, minWidth: 200 }}>
           <Search className="search-bar-icon" />
-          <input className="input-field" placeholder="Search products..." value={search} onChange={e => setSearch(e.target.value)} />
+          <input className="input-field" placeholder="Buscar produtos..." value={search} onChange={e => setSearch(e.target.value)} />
         </div>
         <select className="input-field" value={filterCategory} onChange={e => setFilterCategory(e.target.value)} style={{ width: 'auto', minWidth: 160 }}>
-          <option value="">All Categories</option>
+          <option value="">Todas as Categorias</option>
           {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
       </div>
@@ -223,8 +223,8 @@ export default function ManageProducts() {
         <div className="loading-container"><div className="spinner" /></div>
       ) : filtered.length === 0 ? (
         <div className="empty-state">
-          <h3>No products found</h3>
-          <p>Add your first product or adjust filters</p>
+          <h3>Nenhum produto encontrado</h3>
+          <p>Adicione seu primeiro produto ou ajuste os filtros</p>
         </div>
       ) : (
         <div style={{ display: 'grid', gap: 10 }}>
@@ -247,12 +247,12 @@ export default function ManageProducts() {
                       background: product.available !== false ? 'var(--green-50)' : 'var(--red-50)',
                       color: product.available !== false ? 'var(--green-600)' : 'var(--red-500)',
                     }}>
-                      {product.available !== false ? 'Available' : 'Unavailable'}
+                      {product.available !== false ? 'Disponível' : 'Indisponível'}
                     </span>
                   </div>
                   {product.category_id && (
                     <div style={{ fontSize: 12, color: 'var(--gray-400)', marginTop: 2 }}>
-                      {categoryMap[product.category_id] || 'Uncategorized'}
+                      {categoryMap[product.category_id] || 'Sem categoria'}
                     </div>
                   )}
                   {product.description && (
@@ -268,7 +268,7 @@ export default function ManageProducts() {
                   <button
                     onClick={() => toggleMutation.mutate({ id: product.id, available: product.available === false })}
                     className="back-btn"
-                    title={product.available !== false ? 'Mark unavailable' : 'Mark available'}
+                    title={product.available !== false ? 'Marcar indisponível' : 'Marcar disponível'}
                     style={{ color: product.available !== false ? 'var(--green-500)' : 'var(--gray-400)' }}
                   >
                     {product.available !== false ? <Eye style={{ width: 16, height: 16 }} /> : <EyeOff style={{ width: 16, height: 16 }} />}
@@ -280,7 +280,7 @@ export default function ManageProducts() {
                     className="back-btn"
                     style={{ color: 'var(--red-500)' }}
                     onClick={() => {
-                      if (window.confirm(`Delete "${product.name}"?`)) deleteMutation.mutate(product.id);
+                      if (window.confirm(`Excluir "${product.name}"?`)) deleteMutation.mutate(product.id);
                     }}
                   >
                     <Trash2 style={{ width: 15, height: 15 }} />

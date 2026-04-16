@@ -2,20 +2,20 @@ import React from 'react';
 import { CheckCircle2, Circle, Clock, ChefHat, PackageCheck, Truck, Home, Store } from 'lucide-react';
 
 const DELIVERY_STEPS = [
-  { key: 'new', label: 'Order Received', icon: Clock, emoji: '📋' },
-  { key: 'awaiting_confirmation', label: 'Confirming', icon: Clock, emoji: '⏳' },
-  { key: 'in_preparation', label: 'In Kitchen', icon: ChefHat, emoji: '🍳' },
-  { key: 'ready', label: 'Ready', icon: PackageCheck, emoji: '📦' },
-  { key: 'out_for_delivery', label: 'On the Way', icon: Truck, emoji: '🛵' },
-  { key: 'delivered', label: 'Delivered', icon: Home, emoji: '✅' },
+  { key: 'new', label: 'Pedido Recebido', icon: Clock, emoji: '📋' },
+  { key: 'awaiting_confirmation', label: 'Confirmando', icon: Clock, emoji: '⏳' },
+  { key: 'in_preparation', label: 'Na Cozinha', icon: ChefHat, emoji: '🍳' },
+  { key: 'ready', label: 'Pronto', icon: PackageCheck, emoji: '📦' },
+  { key: 'out_for_delivery', label: 'Saiu para Entrega', icon: Truck, emoji: '🛵' },
+  { key: 'delivered', label: 'Entregue', icon: Home, emoji: '✅' },
 ];
 
 const PICKUP_STEPS = [
-  { key: 'new', label: 'Order Received', icon: Clock, emoji: '📋' },
-  { key: 'awaiting_confirmation', label: 'Confirming', icon: Clock, emoji: '⏳' },
-  { key: 'in_preparation', label: 'In Kitchen', icon: ChefHat, emoji: '🍳' },
-  { key: 'ready', label: 'Ready for Pickup', icon: PackageCheck, emoji: '🏪' },
-  { key: 'picked_up', label: 'Picked Up', icon: Store, emoji: '✅' },
+  { key: 'new', label: 'Pedido Recebido', icon: Clock, emoji: '📋' },
+  { key: 'awaiting_confirmation', label: 'Confirmando', icon: Clock, emoji: '⏳' },
+  { key: 'in_preparation', label: 'Na Cozinha', icon: ChefHat, emoji: '🍳' },
+  { key: 'ready', label: 'Pronto para Retirada', icon: PackageCheck, emoji: '🏪' },
+  { key: 'picked_up', label: 'Retirado', icon: Store, emoji: '✅' },
 ];
 
 const STATUS_INDEX = {
@@ -52,8 +52,8 @@ export default function OrderTracker({ status, orderType }) {
         textAlign: 'center',
       }}>
         <div style={{ fontSize: 24, marginBottom: 6 }}>❌</div>
-        <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--red-500)' }}>Order Cancelled</div>
-        <div style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 4 }}>This order has been cancelled</div>
+        <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--red-500)' }}>Pedido Cancelado</div>
+        <div style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 4 }}>Este pedido foi cancelado</div>
       </div>
     );
   }
@@ -111,7 +111,7 @@ export default function OrderTracker({ status, orderType }) {
                   background: 'var(--purple-50)', padding: '2px 8px', borderRadius: 'var(--r-full)',
                 }}>
                   <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--purple-500)', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
-                  Current
+                  Atual
                 </div>
               )}
             </div>

@@ -34,8 +34,8 @@ export default function AdminPanel() {
   const operationalPanels = [
     {
       icon: ChefHat,
-      title: 'Kitchen',
-      subtitle: `${newOrders + awaitingConf + preparing} active`,
+      title: 'Cozinha',
+      subtitle: `${newOrders + awaitingConf + preparing} ativo${newOrders + awaitingConf + preparing !== 1 ? 's' : ''}`,
       route: '/kitchen',
       color: 'var(--orange-500)',
       bg: 'var(--orange-50)',
@@ -43,16 +43,16 @@ export default function AdminPanel() {
     },
     {
       icon: Truck,
-      title: 'Delivery',
-      subtitle: `${ready + delivering} to handle`,
+      title: 'Entregas',
+      subtitle: `${ready + delivering} para tratar`,
       route: '/delivery',
       color: 'var(--purple-600)',
       bg: 'var(--purple-50)',
     },
     {
       icon: ClipboardList,
-      title: 'All Orders',
-      subtitle: `${orders.length} total`,
+      title: 'Todos os Pedidos',
+      subtitle: `${orders.length} no total`,
       route: '/admin/orders',
       color: 'var(--blue-500)',
       bg: 'var(--blue-50)',
@@ -60,9 +60,9 @@ export default function AdminPanel() {
   ];
 
   const managementPanels = [
-    { icon: Package, title: 'Products', subtitle: 'Manage your menu', route: '/admin/products', color: 'var(--green-500)', bg: 'var(--green-50)' },
-    { icon: Tag, title: 'Categories', subtitle: 'Organize your menu', route: '/admin/categories', color: 'var(--yellow-500)', bg: 'var(--yellow-50)' },
-    { icon: Settings, title: 'Settings', subtitle: 'Restaurant info', route: '/admin/settings', color: 'var(--gray-600)', bg: 'var(--gray-100)' },
+    { icon: Package, title: 'Produtos', subtitle: 'Gerencie o cardápio', route: '/admin/products', color: 'var(--green-500)', bg: 'var(--green-50)' },
+    { icon: Tag, title: 'Categorias', subtitle: 'Organize o cardápio', route: '/admin/categories', color: 'var(--yellow-500)', bg: 'var(--yellow-50)' },
+    { icon: Settings, title: 'Configurações', subtitle: 'Dados do restaurante', route: '/admin/settings', color: 'var(--gray-600)', bg: 'var(--gray-100)' },
   ];
 
   return (
@@ -74,11 +74,11 @@ export default function AdminPanel() {
             <h1 style={{ fontSize: 30, fontWeight: 900, color: 'var(--gray-900)', letterSpacing: '-0.04em', marginBottom: 4 }}>
               Dashboard
             </h1>
-            <p style={{ fontSize: 14, color: 'var(--gray-400)' }}>Restaurant Management · {moment().format('dddd, DD MMM')}</p>
+            <p style={{ fontSize: 14, color: 'var(--gray-400)' }}>Gestão do Restaurante · {moment().format('dddd, DD MMM')}</p>
           </div>
           <button className="btn btn-outline btn-sm" onClick={() => navigate('/')}>
             <ShoppingBag style={{ width: 15, height: 15 }} />
-            Customer Menu
+            Cardápio
           </button>
         </div>
       </div>
@@ -86,11 +86,11 @@ export default function AdminPanel() {
       {/* Key Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 28 }}>
         {[
-          { label: 'New Orders', value: newOrders, color: 'var(--blue-500)', bg: 'var(--blue-50)', icon: AlertCircle },
-          { label: 'Preparing', value: preparing, color: 'var(--orange-500)', bg: 'var(--orange-50)', icon: ChefHat },
-          { label: 'Ready / Delivering', value: ready + delivering, color: 'var(--purple-600)', bg: 'var(--purple-50)', icon: Truck },
-          { label: 'Today Completed', value: completed, color: 'var(--green-600)', bg: 'var(--green-50)', icon: CheckCircle2 },
-          { label: "Today's Revenue", value: `R$ ${todayTotal.toFixed(0)}`, color: 'var(--purple-700)', bg: 'var(--purple-50)', icon: TrendingUp },
+          { label: 'Novos Pedidos', value: newOrders, color: 'var(--blue-500)', bg: 'var(--blue-50)', icon: AlertCircle },
+          { label: 'Em Preparo', value: preparing, color: 'var(--orange-500)', bg: 'var(--orange-50)', icon: ChefHat },
+          { label: 'Prontos / Em Entrega', value: ready + delivering, color: 'var(--purple-600)', bg: 'var(--purple-50)', icon: Truck },
+          { label: 'Concluídos Hoje', value: completed, color: 'var(--green-600)', bg: 'var(--green-50)', icon: CheckCircle2 },
+          { label: 'Faturamento Hoje', value: `R$ ${todayTotal.toFixed(0)}`, color: 'var(--purple-700)', bg: 'var(--purple-50)', icon: TrendingUp },
         ].map((stat, i) => {
           const Icon = stat.icon;
           return (
@@ -113,7 +113,7 @@ export default function AdminPanel() {
 
       {/* Operational Panels */}
       <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 12, letterSpacing: '-0.01em' }}>
-        Operations
+        Operações
       </h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 28 }}>
         {operationalPanels.map(panel => {
@@ -127,7 +127,7 @@ export default function AdminPanel() {
                   </div>
                   {panel.alert && (
                     <span style={{ background: 'var(--red-500)', color: '#fff', fontSize: 12, fontWeight: 800, padding: '3px 10px', borderRadius: 'var(--r-full)' }}>
-                      {panel.alert} new
+                      {panel.alert} novo{panel.alert !== 1 ? 's' : ''}
                     </span>
                   )}
                 </div>
@@ -141,7 +141,7 @@ export default function AdminPanel() {
 
       {/* Management */}
       <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 12, letterSpacing: '-0.01em' }}>
-        Management
+        Gerenciamento
       </h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 32 }}>
         {managementPanels.map(panel => {
@@ -162,19 +162,19 @@ export default function AdminPanel() {
 
       {/* Recent Orders */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--gray-700)', letterSpacing: '-0.01em' }}>Recent Orders</h2>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--gray-700)', letterSpacing: '-0.01em' }}>Pedidos Recentes</h2>
         <button
           onClick={() => navigate('/admin/orders')}
           style={{ fontSize: 13, color: 'var(--purple-600)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}
         >
-          View all →
+          Ver todos →
         </button>
       </div>
       {recentOrders.length === 0 ? (
         <div className="empty-state" style={{ padding: 32 }}>
           <Clock />
-          <h3>No orders yet</h3>
-          <p>Orders will appear here as customers place them</p>
+          <h3>Nenhum pedido ainda</h3>
+          <p>Os pedidos aparecerão aqui conforme os clientes fizerem</p>
         </div>
       ) : (
         <div className="card">

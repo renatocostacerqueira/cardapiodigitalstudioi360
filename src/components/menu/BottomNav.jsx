@@ -9,9 +9,9 @@ export default function BottomNav() {
   const path = location.pathname;
 
   const navItems = [
-    { to: '/', icon: Home, label: 'Menu' },
-    { to: '/cart', icon: ShoppingCart, label: 'Cart', badge: totalItems },
-    { to: '/orders', icon: ClipboardList, label: 'Orders' },
+    { to: '/', icon: Home, label: 'Cardápio' },
+    { to: '/cart', icon: ShoppingCart, label: 'Carrinho', badge: totalItems },
+    { to: '/orders', icon: ClipboardList, label: 'Pedidos' },
     { to: '/admin', icon: User, label: 'Admin' },
   ];
 
