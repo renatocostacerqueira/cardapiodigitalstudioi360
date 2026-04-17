@@ -687,12 +687,26 @@ select.input-field {
 
 /* ===== PANEL (Admin/Kitchen/Delivery) ===== */
 .panel-container {
+  width: 100%;
   max-width: 880px;
   margin: 0 auto;
   padding: 28px 24px;
   min-height: 100vh;
   background: var(--gray-50);
+  box-sizing: border-box;
 }
+
+@media (min-width: 1024px) {
+  .panel-container {
+    padding: 40px 48px 60px;
+  }
+
+  /* Garante que o fundo cinza cobre a tela toda no desktop */
+  body:has(.panel-container) {
+    background: var(--gray-100);
+  }
+}
+
 .panel-header {
   display: flex;
   align-items: center;
