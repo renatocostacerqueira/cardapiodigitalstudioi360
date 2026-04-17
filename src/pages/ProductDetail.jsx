@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
@@ -14,6 +14,7 @@ export default function ProductDetail() {
   const [notes, setNotes] = useState('');
   const [added, setAdded] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [selectedVariation, setSelectedVariation] = useState(null);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', id],
@@ -23,9 +24,21 @@ export default function ProductDetail() {
     },
   });
 
+  useEffect(() => {
+    if (product?.has_variations && product.variations?.length > 0) {
+      setSelectedVariation(product.variations[0]);
+    }
+  }, [product]);
+
+  const activePrice = product?.has_variations && selectedVariation
+    ? selectedVariation.price
+    : product?.price;
+
   const handleAddToCart = () => {
     if (!product) return;
-    addItem(product, quantity, notes);
+    const variationLabel = product.has_variations && selectedVariation ? selectedVariation.name : null;
+    const itemNotes = variationLabel ? [variationLabel, notes].filter(Boolean).join(' — ') : notes;
+    addItem({ ...product, price: activePrice }, quantity, itemNotes);
     setAdded(true);
     setTimeout(() => navigate(-1), 650);
   };
@@ -118,7 +131,7 @@ export default function ProductDetail() {
               {product.name}
             </h1>
             <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--purple-600)', letterSpacing: '-0.03em', flexShrink: 0, paddingTop: 2 }}>
-              R$ {product.price?.toFixed(2)}
+              R$ {activePrice?.toFixed(2)}
             </div>
           </div>
 
@@ -137,6 +150,38 @@ export default function ProductDetail() {
             </p>
           )}
 
+          {/* Variations */}
+          {product.has_variations && product.variations?.length > 0 && (
+            <div style={{ marginBottom: 22 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 10 }}>Tamanho / Variação</div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {product.variations.map((v, i) => {
+                  const isSelected = selectedVariation?.name === v.name;
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedVariation(v)}
+                      style={{
+                        padding: '9px 18px',
+                        borderRadius: 'var(--r-full)',
+                        border: `2px solid ${isSelected ? 'var(--purple-600)' : 'var(--gray-200)'}`,
+                        background: isSelected ? 'var(--purple-600)' : '#fff',
+                        color: isSelected ? '#fff' : 'var(--gray-700)',
+                        fontWeight: 700,
+                        fontSize: 14,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s',
+                      }}
+                    >
+                      {v.name}
+                      <span style={{ marginLeft: 6, opacity: 0.85, fontSize: 13 }}>R$ {Number(v.price).toFixed(2)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <div className="divider" />
 
           {/* Quantity */}
@@ -149,7 +194,7 @@ export default function ProductDetail() {
               <div style={{ fontSize: 11, color: 'var(--gray-400)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>Subtotal</div>
 
               <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>
-                R$ {(product.price * quantity).toFixed(2)}
+                R$ {((activePrice || 0) * quantity).toFixed(2)}
               </div>
             </div>
           </div>
