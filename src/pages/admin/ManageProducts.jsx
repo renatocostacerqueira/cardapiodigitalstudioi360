@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Pencil, Trash2, ImageOff, Star, Eye, EyeOff, Search, Loader2, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, ImageOff, Star, Eye, EyeOff, Search, Loader2, X, PlusCircle, MinusCircle } from 'lucide-react';
 
 function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categories }) {
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -42,10 +41,6 @@ function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categor
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div className="input-group">
-                <label className="input-label">Preço (R$) *</label>
-                <input className="input-field" type="number" step="0.01" min="0" value={form.price} onChange={f('price')} placeholder="0.00" />
-              </div>
-              <div className="input-group">
                 <label className="input-label">Categoria</label>
                 <select className="input-field" value={form.category_id} onChange={f('category_id')}>
                   <option value="">Sem categoria</option>
@@ -53,6 +48,75 @@ function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categor
                 </select>
               </div>
             </div>
+
+            {/* Variations toggle */}
+            <div style={{ margin: '4px 0 12px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+                <div
+                  onClick={() => setForm(prev => ({ ...prev, has_variations: !prev.has_variations, variations: !prev.has_variations ? (prev.variations.length ? prev.variations : [{ name: '', price: '' }]) : prev.variations }))}
+                  style={{ width: 38, height: 22, borderRadius: 'var(--r-full)', background: form.has_variations ? 'var(--purple-600)' : 'var(--gray-300)', position: 'relative', cursor: 'pointer', transition: 'background 0.2s', flexShrink: 0 }}
+                >
+                  <div style={{ position: 'absolute', top: 2, left: form.has_variations ? 18 : 2, width: 18, height: 18, borderRadius: '50%', background: '#fff', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+                </div>
+                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--gray-700)' }}>Produto com variações (tamanhos / pesos)</span>
+              </label>
+            </div>
+
+            {!form.has_variations && (
+              <div className="input-group">
+                <label className="input-label">Preço (R$) *</label>
+                <input className="input-field" type="number" step="0.01" min="0" value={form.price} onChange={f('price')} placeholder="0.00" />
+              </div>
+            )}
+
+            {form.has_variations && (
+              <div className="input-group">
+                <label className="input-label">Variações (nome + preço) *</label>
+                {(form.variations || []).map((v, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+                    <input
+                      className="input-field"
+                      placeholder="Ex: 250g, 500g, P, M, G"
+                      value={v.name}
+                      onChange={e => {
+                        const vars = [...form.variations];
+                        vars[i] = { ...vars[i], name: e.target.value };
+                        setForm(prev => ({ ...prev, variations: vars }));
+                      }}
+                      style={{ flex: 2 }}
+                    />
+                    <input
+                      className="input-field"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="Preço R$"
+                      value={v.price}
+                      onChange={e => {
+                        const vars = [...form.variations];
+                        vars[i] = { ...vars[i], price: e.target.value };
+                        setForm(prev => ({ ...prev, variations: vars }));
+                      }}
+                      style={{ flex: 1 }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setForm(prev => ({ ...prev, variations: prev.variations.filter((_, idx) => idx !== i) }))}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--red-400)', padding: 4, flexShrink: 0 }}
+                    >
+                      <MinusCircle style={{ width: 18, height: 18 }} />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setForm(prev => ({ ...prev, variations: [...(prev.variations || []), { name: '', price: '' }] }))}
+                  style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: '1.5px dashed var(--purple-300)', borderRadius: 'var(--r-sm)', padding: '8px 14px', cursor: 'pointer', color: 'var(--purple-600)', fontSize: 13, fontWeight: 600, width: '100%', justifyContent: 'center' }}
+                >
+                  <PlusCircle style={{ width: 15, height: 15 }} /> Adicionar variação
+                </button>
+              </div>
+            )}
           </div>
 
           <div>
@@ -119,13 +183,12 @@ function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categor
 }
 
 export default function ManageProducts() {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
-  const [form, setForm] = useState({ name: '', description: '', image: '', price: '', category_id: '', available: true, featured: false });
+  const [form, setForm] = useState({ name: '', description: '', image: '', price: '', category_id: '', available: true, featured: false, has_variations: false, variations: [] });
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['admin-products'],
@@ -139,7 +202,13 @@ export default function ManageProducts() {
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
-      const payload = { ...data, price: parseFloat(data.price) || 0 };
+      const variations = (data.variations || [])
+        .filter(v => v.name)
+        .map(v => ({ name: v.name, price: parseFloat(v.price) || 0 }));
+      const basePrice = data.has_variations && variations.length > 0
+        ? variations[0].price
+        : parseFloat(data.price) || 0;
+      const payload = { ...data, price: basePrice, variations: data.has_variations ? variations : [] };
       if (editing) return base44.entities.Product.update(editing.id, payload);
       return base44.entities.Product.create(payload);
     },
@@ -157,7 +226,7 @@ export default function ManageProducts() {
   });
 
   const resetForm = () => {
-    setForm({ name: '', description: '', image: '', price: '', category_id: '', available: true, featured: false });
+    setForm({ name: '', description: '', image: '', price: '', category_id: '', available: true, featured: false, has_variations: false, variations: [] });
     setEditing(null);
     setShowForm(false);
   };
@@ -168,10 +237,11 @@ export default function ManageProducts() {
       image: product.image || '', price: product.price?.toString() || '',
       category_id: product.category_id || '', available: product.available !== false,
       featured: product.featured || false,
+      has_variations: product.has_variations || false,
+      variations: product.variations || [],
     });
     setEditing(product);
     setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const categoryMap = Object.fromEntries(categories.map(c => [c.id, c.name]));
@@ -183,16 +253,11 @@ export default function ManageProducts() {
   });
 
   return (
-    <div className="panel-container">
+    <div style={{ padding: '32px 36px' }}>
       <div className="panel-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button className="back-btn" onClick={() => navigate('/admin')} aria-label="Back">
-            <ArrowLeft style={{ width: 20, height: 20 }} />
-          </button>
-          <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>Produtos</h1>
-            <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>{products.length} produtos no total</p>
-          </div>
+        <div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>Produtos</h1>
+          <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>{products.length} produtos no total</p>
         </div>
         <button className="btn btn-primary btn-sm" onClick={() => { resetForm(); setShowForm(true); }}>
           <Plus style={{ width: 16, height: 16 }} /> Adicionar Produto
@@ -260,9 +325,19 @@ export default function ManageProducts() {
                       {product.description}
                     </div>
                   )}
-                  <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--purple-600)', marginTop: 4, letterSpacing: '-0.02em' }}>
-                    R$ {product.price?.toFixed(2)}
-                  </div>
+                  {product.has_variations && product.variations?.length > 0 ? (
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 5 }}>
+                      {product.variations.map((v, i) => (
+                        <span key={i} style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 'var(--r-full)', background: 'var(--purple-50)', color: 'var(--purple-700)', border: '1px solid var(--purple-200)' }}>
+                          {v.name} · R$ {Number(v.price).toFixed(2)}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--purple-600)', marginTop: 4, letterSpacing: '-0.02em' }}>
+                      R$ {product.price?.toFixed(2)}
+                    </div>
+                  )}
                 </div>
                 <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
                   <button

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, ImageOff, Store, Phone, MapPin, Clock, DollarSign, Loader2 } from 'lucide-react';
+
+import { Save, ImageOff, Store, Phone, MapPin, Clock, DollarSign, Loader2 } from 'lucide-react';
 
 const DEFAULT_FORM = {
   name: '', description: '', phone: '', address: '',
@@ -10,7 +10,6 @@ const DEFAULT_FORM = {
 };
 
 export default function RestaurantSettings() {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [form, setForm] = useState(DEFAULT_FORM);
   const [restaurantId, setRestaurantId] = useState(null);
@@ -73,20 +72,15 @@ export default function RestaurantSettings() {
   if (isLoading) return <div className="loading-container"><div className="spinner" /></div>;
 
   return (
-    <div className="panel-container">
+    <div style={{ padding: '32px 36px' }}>
       <div className="panel-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button className="back-btn" onClick={() => navigate('/admin')} aria-label="Back">
-            <ArrowLeft style={{ width: 20, height: 20 }} />
-          </button>
-          <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>
-              Configurações do Restaurante
-            </h1>
-            <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>
-              {restaurantId ? 'Edite as informações do restaurante' : 'Configure seu restaurante'}
-            </p>
-          </div>
+        <div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>
+            Configurações do Restaurante
+          </h1>
+          <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>
+            {restaurantId ? 'Edite as informações do restaurante' : 'Configure seu restaurante'}
+          </p>
         </div>
         <button
           className={`btn btn-sm ${saved ? 'btn-success' : 'btn-primary'}`}

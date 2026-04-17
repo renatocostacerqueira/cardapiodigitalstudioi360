@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Pencil, Trash2, X, ChevronUp, ChevronDown } from 'lucide-react';
+
+import { Plus, Pencil, Trash2, X, ChevronUp, ChevronDown } from 'lucide-react';
 
 export default function ManageCategories() {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -50,7 +49,6 @@ export default function ManageCategories() {
     setForm({ name: cat.name || '', description: cat.description || '', display_order: cat.display_order || 0, active: cat.active !== false });
     setEditing(cat);
     setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const moveOrder = (cat, direction) => {
@@ -68,16 +66,11 @@ export default function ManageCategories() {
   const f = (key) => (e) => setForm(prev => ({ ...prev, [key]: e.target.value }));
 
   return (
-    <div className="panel-container">
+    <div style={{ padding: '32px 36px' }}>
       <div className="panel-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button className="back-btn" onClick={() => navigate('/admin')} aria-label="Back">
-            <ArrowLeft style={{ width: 20, height: 20 }} />
-          </button>
-          <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>Categorias</h1>
-            <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>{categories.length} categoria{categories.length !== 1 ? 's' : ''}</p>
-          </div>
+        <div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>Categorias</h1>
+          <p style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>{categories.length} categoria{categories.length !== 1 ? 's' : ''}</p>
         </div>
         <button className="btn btn-primary btn-sm" onClick={() => { resetForm(); setShowForm(v => !v); }}>
           <Plus style={{ width: 16, height: 16 }} /> Adicionar Categoria

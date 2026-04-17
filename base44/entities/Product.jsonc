@@ -16,7 +16,7 @@
     },
     "price": {
       "type": "number",
-      "description": "Product price"
+      "description": "Base product price (used when no variations)"
     },
     "category_id": {
       "type": "string",
@@ -31,6 +31,28 @@
       "type": "boolean",
       "default": false,
       "description": "Whether product is featured"
+    },
+    "has_variations": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether product has size/price variations"
+    },
+    "variations": {
+      "type": "array",
+      "description": "Product variations (e.g. sizes with different prices)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Variation name (e.g. 250g, 500g, P, M, G)"
+          },
+          "price": {
+            "type": "number",
+            "description": "Price for this variation"
+          }
+        }
+      }
     }
   },
   "required": [
