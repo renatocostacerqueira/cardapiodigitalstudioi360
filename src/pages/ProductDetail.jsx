@@ -42,7 +42,7 @@ export default function ProductDetail() {
     return (
       <div className="app-shell">
         <div className="page-container">
-          <div className="empty-state"><h3>Product not found</h3></div>
+          <div className="empty-state"><h3>Produto não encontrado</h3></div>
         </div>
       </div>
     );
@@ -51,7 +51,7 @@ export default function ProductDetail() {
   return (
     <div className="app-shell" style={{ background: '#fff' }}>
       {/* Image Hero */}
-      <div style={{ position: 'relative', width: '100%', height: 300, background: 'var(--gray-100)' }}>
+      <div style={{ position: 'relative', width: '100%', height: 300, background: 'var(--gray-100)', maxWidth: '100%' }}>
         {product.image ? (
           <img
             src={product.image}
@@ -127,7 +127,7 @@ export default function ProductDetail() {
             {[...Array(5)].map((_, i) => (
               <Star key={i} style={{ width: 13, height: 13, fill: '#eab308', color: '#eab308' }} />
             ))}
-            <span style={{ fontSize: 13, color: 'var(--gray-400)', fontWeight: 600, marginLeft: 2 }}>4.8 (128 reviews)</span>
+            <span style={{ fontSize: 13, color: 'var(--gray-400)', fontWeight: 600, marginLeft: 2 }}>4.8 (128 avaliações)</span>
           </div>
 
           {/* Description */}
@@ -142,11 +142,12 @@ export default function ProductDetail() {
           {/* Quantity */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 8 }}>Quantity</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 8 }}>Quantidade</div>
               <QuantitySelector value={quantity} onChange={setQuantity} />
             </div>
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: 11, color: 'var(--gray-400)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>Subtotal</div>
+
               <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>
                 R$ {(product.price * quantity).toFixed(2)}
               </div>
@@ -156,12 +157,12 @@ export default function ProductDetail() {
           {/* Notes */}
           <div className="input-group">
             <label className="input-label" htmlFor="notes">
-              Special Requests
+              Pedidos Especiais
             </label>
             <textarea
               id="notes"
               className="input-field"
-              placeholder="E.g. no onions, extra sauce, gluten-free... any changes are welcome!"
+              placeholder="Ex: sem cebola, molho extra, sem glúten... qualquer preferência é bem-vinda!"
               value={notes}
               onChange={e => setNotes(e.target.value)}
               rows={3}
@@ -183,10 +184,10 @@ export default function ProductDetail() {
             <Sparkles style={{ width: 18, height: 18, color: 'var(--purple-400)', flexShrink: 0 }} />
             <div>
               <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--purple-600)', marginBottom: 2 }}>
-                Customization options coming soon
+                Opções de personalização em breve
               </div>
               <div style={{ fontSize: 11, color: 'var(--purple-400)' }}>
-                Suggested extras & removals will be available here
+                Adicionais e remoções sugeridas estarão disponíveis aqui
               </div>
             </div>
           </div>
@@ -199,7 +200,7 @@ export default function ProductDetail() {
             style={{ borderRadius: 'var(--r-full)', fontSize: 16, fontWeight: 800 }}
           >
             <ShoppingCart style={{ width: 20, height: 20 }} />
-            {added ? '✓ Added to Cart!' : 'Add to Cart'}
+            {added ? '✓ Adicionado!' : 'Adicionar ao Carrinho'}
           </button>
         </div>
       </div>
