@@ -44,7 +44,7 @@ function UserFormModal({ user, onClose, onSaved }) {
         await base44.functions.invoke('manageUsers', { action: 'updateRole', userId: user.id, role: form.role });
       } else {
         if (!form.email || !form.role) throw new Error('Preencha todos os campos obrigatórios.');
-        await base44.functions.invoke('manageUsers', { action: 'create', email: form.email, name: form.name, role: form.role });
+        await base44.functions.invoke('manageUsers', { action: 'create', email: form.email, password: form.password, name: form.name, role: form.role });
       }
       onSaved();
       onClose();

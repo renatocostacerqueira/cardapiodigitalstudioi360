@@ -30,13 +30,13 @@ Deno.serve(async (req) => {
       }
 
       // Cria o usuário com e-mail e senha definidos pelo administrador
-      await base44.auth.register({ email, password });
+      await base44.auth.register({ email, password, full_name: name });
 
-      // Após criar, busca o usuário para atualizar o role
+      // Após criar, busca o usuário para atualizar o role e full_name
       const allUsers = await base44.asServiceRole.entities.User.list();
       const newUser = allUsers.find(u => u.email === email);
       if (newUser) {
-        await base44.asServiceRole.entities.User.update(newUser.id, { role });
+        await base44.asServiceRole.entities.User.update(newUser.id, { role, full_name: name });
       }
 
       return Response.json({ success: true, message: 'Usuário criado com sucesso.' });
