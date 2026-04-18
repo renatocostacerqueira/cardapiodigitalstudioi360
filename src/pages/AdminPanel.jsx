@@ -241,7 +241,9 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
               <span style={{ fontWeight: 700, color: 'var(--gray-800)' }}>{PAYMENT_LABELS[order.payment_method] || order.payment_method}</span>
             </div>
             {order.payment_method === 'cash_change' && order.change_amount > 0 && (
-              <div style={{ marginTop: 8, fontSize: 13, fontWeight: 700, color: '#c2410c' }}>⚠ Troco para R$ {order.change_amount?.toFixed(2)}</div>
+              <div style={{ marginTop: 8, fontSize: 13, fontWeight: 700, color: '#c2410c' }}>
+                ⚠ Cliente vai pagar com R$ {order.change_amount?.toFixed(2)} — Troco a devolver: R$ {(order.change_amount - order.total_price)?.toFixed(2)}
+              </div>
             )}
           </div>
 
@@ -363,7 +365,7 @@ function OrdersList({ orders, isLoading }) {
                   <div style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 1 }}>
                     {moment(order.created_date).format('DD/MM HH:mm')} · {PAYMENT_LABELS[order.payment_method] || ''}
                     {order.payment_method === 'cash_change' && order.change_amount > 0 &&
-                      <span style={{ color: '#c2410c', fontWeight: 700 }}> · Troco R$ {order.change_amount?.toFixed(2)}</span>}
+                      <span style={{ color: '#c2410c', fontWeight: 700 }}> · Troco R$ {(order.change_amount - order.total_price)?.toFixed(2)}</span>}
                   </div>
                 </div>
                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
