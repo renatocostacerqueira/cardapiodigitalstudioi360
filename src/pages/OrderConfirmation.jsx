@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { CheckCircle, Home, MapPin, CreditCard, Truck, Store, Clock, MessageSquare } from 'lucide-react';
+import { CheckCircle, Home, Navigation, MessageSquare } from 'lucide-react';
+import { motion } from 'framer-motion';
 import StatusBadge from '../components/shared/StatusBadge';
-import OrderTracker from '../components/order/OrderTracker';
-import LiveTrackingMap from '../components/delivery/LiveTrackingMap';
-
-const PAYMENT_LABELS = {
-  cash: 'Dinheiro', cash_change: 'Dinheiro (com troco)', pix: 'PIX', debit: 'Cartão de Débito', credit: 'Cartão de Crédito',
-};
 
 export default function OrderConfirmation() {
   const { id } = useParams();
@@ -16,7 +11,6 @@ export default function OrderConfirmation() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Initial fetch
   useEffect(() => {
     base44.entities.Order.filter({ id }).then(orders => {
       setOrder(orders[0]);
@@ -24,7 +18,6 @@ export default function OrderConfirmation() {
     });
   }, [id]);
 
-  // Real-time subscription
   useEffect(() => {
     const unsubscribe = base44.entities.Order.subscribe((event) => {
       if (event.id === id && event.type !== 'delete') {
@@ -44,176 +37,141 @@ export default function OrderConfirmation() {
 
   if (!order) return null;
 
-  const isOutForDelivery = order.status === 'out_for_delivery';
   const isDelivered = ['delivered', 'picked_up'].includes(order.status);
 
   return (
-    <div className="app-shell">
-      <div className="page-container" style={{ paddingBottom: 32 }}>
+    <div className="app-shell" style={{ background: '#fff' }}>
+      <div className="page-container" style={{ paddingBottom: 40 }}>
 
-        {/* Header */}
-        <div className="animate-slide-up" style={{ textAlign: 'center', paddingTop: 36, paddingBottom: 8 }}>
-          <div className="confirmation-icon">
-            <CheckCircle />
-          </div>
-          <h1 style={{ fontSize: 26, fontWeight: 900, color: 'var(--gray-900)', letterSpacing: '-0.03em', marginBottom: 6 }}>
+        {/* Success Icon + Title */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+          style={{ textAlign: 'center', paddingTop: 48, paddingBottom: 8 }}
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 20, delay: 0.1 }}
+            className="confirmation-icon"
+          >
+            <CheckCircle style={{ width: 44, height: 44 }} />
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            style={{ fontSize: 28, fontWeight: 900, color: 'var(--gray-900)', letterSpacing: '-0.03em', marginBottom: 8 }}
+          >
             {isDelivered ? 'Bom apetite! 🎉' : 'Pedido Confirmado!'}
-          </h1>
-          <p style={{ fontSize: 14, color: 'var(--gray-400)', marginBottom: 14 }}>
-            {isDelivered ? 'Seu pedido foi concluído' : 'Seu pedido foi recebido e está sendo processado'}
-          </p>
-          <div style={{
-            display: 'inline-block', fontSize: 18, fontWeight: 800, color: 'var(--purple-600)',
-            background: 'var(--purple-50)', padding: '8px 20px',
-            borderRadius: 'var(--r-full)', letterSpacing: '0.04em', marginBottom: 14,
-          }}>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.35 }}
+            style={{ fontSize: 14, color: 'var(--gray-400)', marginBottom: 20 }}
+          >
+            {isDelivered ? 'Seu pedido foi concluído com sucesso' : 'Seu pedido foi recebido e está sendo processado'}
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4 }}
+            style={{
+              display: 'inline-block', fontSize: 20, fontWeight: 900, color: 'var(--purple-600)',
+              background: 'var(--purple-50)', padding: '10px 24px',
+              borderRadius: 'var(--r-full)', letterSpacing: '0.04em', marginBottom: 16,
+              border: '2px solid var(--purple-200)',
+            }}
+          >
             {order.order_number}
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          </motion.div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
             <StatusBadge status={order.status} />
           </div>
-        </div>
+        </motion.div>
 
-        {/* Live Map when out for delivery */}
-        {isOutForDelivery && order.order_type === 'delivery' && order.address_street && (
-          <div style={{ marginTop: 20, marginBottom: 14 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-              <h3 className="section-title" style={{ margin: 0 }}>Rastreamento ao Vivo</h3>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--purple-500)', fontWeight: 700 }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--green-500)', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
-                Ao Vivo
-              </div>
-            </div>
-            <LiveTrackingMap order={order} />
-          </div>
-        )}
+        <div className="divider" style={{ margin: '24px 0' }} />
 
-        {/* Live Tracker (steps) */}
-        {!isDelivered && order.status !== 'cancelled' && order.status !== 'out_for_delivery' && (
-          <div className="card" style={{ marginTop: 20, marginBottom: 14 }}>
+        {/* Order Summary */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
+        >
+          <div className="card" style={{ marginBottom: 20 }}>
             <div className="card-body">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                <h3 className="section-title" style={{ margin: 0 }}>Acompanhamento ao Vivo</h3>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--purple-500)', fontWeight: 700 }}>
-                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--green-500)', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
-                  Ao Vivo
-                </div>
-              </div>
-              <OrderTracker status={order.status} orderType={order.order_type} />
-            </div>
-          </div>
-        )}
-
-        {/* Type + ETA */}
-        <div className="card" style={{ marginBottom: 14 }}>
-          <div className="card-body">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-              <div style={{
-                width: 48, height: 48, borderRadius: 'var(--r-md)',
-                background: order.order_type === 'delivery' ? 'var(--purple-50)' : 'var(--green-50)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-              }}>
-                {order.order_type === 'delivery'
-                  ? <Truck style={{ width: 22, height: 22, color: 'var(--purple-600)' }} />
-                  : <Store style={{ width: 22, height: 22, color: 'var(--green-600)' }} />
-                }
-              </div>
-              <div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--gray-900)' }}>
-                  {order.order_type === 'delivery' ? 'Pedido para Entrega' : 'Pedido para Retirada'}
-                </div>
-                <div style={{ fontSize: 13, color: 'var(--gray-400)', marginTop: 2 }}>
-                  {order.order_type === 'delivery' ? 'Entregaremos no seu endereço' : 'Retire no restaurante'}
-                </div>
-              </div>
-              <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--gray-400)', fontSize: 12 }}>
-                  <Clock style={{ width: 12, height: 12 }} />
-                  ~30 min
-                </div>
-              </div>
-            </div>
-
-            {order.order_type === 'delivery' && order.address_street && (
-              <>
-                <div className="divider" />
-                <div className="info-row" style={{ paddingTop: 0 }}>
-                  <MapPin style={{ width: 16, height: 16, color: 'var(--gray-300)' }} />
-                  <div>
-                    <div className="info-label">Endereço de Entrega</div>
-                    <div className="info-value">
-                      {order.address_street}, {order.address_number}
-                      {order.address_complement && ` — ${order.address_complement}`}
-                      <br />{order.address_neighborhood}, {order.address_city}
-                      {order.address_reference && (
-                        <div style={{ fontSize: 12, color: 'var(--gray-400)', marginTop: 2 }}>📍 {order.address_reference}</div>
-                      )}
-                    </div>
+              <h3 className="section-title">Resumo do Pedido</h3>
+              {order.items?.map((item, i) => (
+                <div key={i} style={{
+                  paddingBottom: i < order.items.length - 1 ? 10 : 0,
+                  marginBottom: i < order.items.length - 1 ? 10 : 0,
+                  borderBottom: i < order.items.length - 1 ? '1px solid var(--gray-100)' : 'none'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <span style={{ fontWeight: 600, color: 'var(--gray-800)', fontSize: 14 }}>
+                      {item.quantity}× {item.product_name}
+                    </span>
+                    <span style={{ fontWeight: 700, color: 'var(--gray-700)', fontSize: 14 }}>
+                      R$ {item.subtotal?.toFixed(2)}
+                    </span>
                   </div>
+                  {item.notes && (
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginTop: 4 }}>
+                      <MessageSquare style={{ width: 11, height: 11, color: 'var(--purple-400)', flexShrink: 0, marginTop: 2 }} />
+                      <span style={{ fontSize: 12, color: 'var(--gray-400)', fontStyle: 'italic' }}>{item.notes}</span>
+                    </div>
+                  )}
                 </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Payment */}
-        <div className="card" style={{ marginBottom: 14 }}>
-          <div className="card-body">
-            <div className="info-row" style={{ paddingTop: 0, paddingBottom: 0 }}>
-              <CreditCard style={{ width: 16, height: 16, color: 'var(--gray-300)' }} />
-              <div style={{ flex: 1 }}>
-                <div className="info-label">Forma de Pagamento</div>
-                <div className="info-value">{PAYMENT_LABELS[order.payment_method] || order.payment_method}</div>
-              </div>
-              {order.payment_method === 'cash_change' && order.change_amount > 0 && (
-                <div style={{ background: 'var(--orange-50)', border: '1px solid #fed7aa', borderRadius: 'var(--r-sm)', padding: '6px 12px', fontSize: 13, color: '#c2410c', fontWeight: 700 }}>
-                  Troco para R$ {order.change_amount.toFixed(2)}
+              ))}
+              <div className="divider" />
+              {order.delivery_fee > 0 && (
+                <div className="summary-row">
+                  <span style={{ color: 'var(--gray-400)' }}>Taxa de Entrega</span>
+                  <span>R$ {order.delivery_fee?.toFixed(2)}</span>
                 </div>
               )}
+              <div className="summary-row total">
+                <span>Total</span>
+                <span style={{ color: 'var(--purple-600)' }}>R$ {order.total_price?.toFixed(2)}</span>
+              </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Items */}
-        <div className="card" style={{ marginBottom: 24 }}>
-          <div className="card-body">
-            <h3 className="section-title">Seu Pedido</h3>
-            {order.items?.map((item, i) => (
-              <div key={i} style={{ paddingBottom: i < order.items.length - 1 ? 12 : 0, marginBottom: i < order.items.length - 1 ? 12 : 0, borderBottom: i < order.items.length - 1 ? '1px solid var(--gray-100)' : 'none' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <span style={{ fontWeight: 600, color: 'var(--gray-800)', fontSize: 14 }}>{item.quantity}× {item.product_name}</span>
-                  <span style={{ fontWeight: 700, color: 'var(--gray-700)', fontSize: 14 }}>R$ {item.subtotal?.toFixed(2)}</span>
-                </div>
-                {item.notes && (
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginTop: 5 }}>
-                    <MessageSquare style={{ width: 12, height: 12, color: 'var(--purple-400)', flexShrink: 0, marginTop: 2 }} />
-                    <span style={{ fontSize: 12, color: 'var(--gray-400)', fontStyle: 'italic' }}>{item.notes}</span>
-                  </div>
-                )}
-              </div>
-            ))}
-            <div className="divider" />
-            {order.delivery_fee > 0 && (
-              <div className="summary-row">
-                <span style={{ color: 'var(--gray-400)' }}>Taxa de Entrega</span>
-                <span>R$ {order.delivery_fee?.toFixed(2)}</span>
-              </div>
-            )}
-            <div className="summary-row total">
-              <span>Total</span>
-              <span style={{ color: 'var(--purple-600)' }}>R$ {order.total_price?.toFixed(2)}</span>
-            </div>
-          </div>
-        </div>
+        {/* CTA Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.55 }}
+          style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
+        >
+          <motion.button
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
+            className="btn btn-primary btn-lg"
+            onClick={() => navigate(`/tracking/${id}`)}
+            style={{ borderRadius: 'var(--r-full)', fontWeight: 800, gap: 10 }}
+          >
+            <Navigation style={{ width: 18, height: 18 }} />
+            Acompanhe seu Pedido
+          </motion.button>
 
-        <button className="btn btn-primary btn-lg" onClick={() => navigate('/')} style={{ borderRadius: 'var(--r-full)', fontWeight: 800 }}>
-          <Home style={{ width: 18, height: 18 }} /> Voltar ao Cardápio
-        </button>
-        <button className="btn btn-outline btn-lg" onClick={() => navigate('/orders')} style={{ marginTop: 10, borderRadius: 'var(--r-full)' }}>
-          Ver Meus Pedidos
-        </button>
+          <button
+            className="btn btn-outline btn-lg"
+            onClick={() => navigate('/')}
+            style={{ borderRadius: 'var(--r-full)' }}
+          >
+            <Home style={{ width: 18, height: 18 }} />
+            Voltar ao Cardápio
+          </button>
+        </motion.div>
       </div>
-      <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }`}</style>
     </div>
   );
 }

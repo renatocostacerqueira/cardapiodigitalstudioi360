@@ -37,6 +37,14 @@ export function CartProvider({ children }) {
     ));
   };
 
+  const updateItem = (index, { quantity, notes }) => {
+    setItems(prev => prev.map((item, i) => {
+      if (i !== index) return item;
+      const newQty = quantity ?? item.quantity;
+      return { ...item, quantity: newQty, notes: notes ?? item.notes, subtotal: newQty * item.unit_price };
+    }));
+  };
+
   const removeItem = (index) => {
     setItems(prev => prev.filter((_, i) => i !== index));
   };
@@ -47,7 +55,7 @@ export function CartProvider({ children }) {
   const totalPrice = items.reduce((sum, item) => sum + item.subtotal, 0);
 
   return (
-    <CartContext.Provider value={{ items, addItem, updateQuantity, removeItem, clearCart, totalItems, totalPrice }}>
+    <CartContext.Provider value={{ items, addItem, updateQuantity, updateItem, removeItem, clearCart, totalItems, totalPrice }}>
       {children}
     </CartContext.Provider>
   );

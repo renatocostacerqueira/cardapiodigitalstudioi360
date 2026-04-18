@@ -22,6 +22,7 @@ import ManageCategories from './pages/admin/ManageCategories';
 import RestaurantSettings from './pages/admin/RestaurantSettings';
 import KitchenTicketPrint from './pages/KitchenTicketPrint';
 import DeliveryTicketPrint from './pages/DeliveryTicketPrint';
+import OrderTracking from './pages/OrderTracking';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -54,6 +55,7 @@ const AuthenticatedApp = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/confirmation/:id" element={<OrderConfirmation />} />
           <Route path="/orders" element={<MyOrders />} />
+          <Route path="/tracking/:id" element={<OrderTracking />} />
         </Route>
 
         {/* Staff / admin pages */}

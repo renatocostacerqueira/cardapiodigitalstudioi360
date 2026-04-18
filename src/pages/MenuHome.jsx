@@ -2,17 +2,22 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import SearchBar from '../components/menu/SearchBar';
 import CategoryPills from '../components/menu/CategoryPills';
+import FloatingCartButton from '../components/menu/FloatingCartButton';
 import { UtensilsCrossed, ImageOff, Star, Zap, Clock, ShieldCheck } from 'lucide-react';
 
 function ProductCard({ product }) {
   const navigate = useNavigate();
   return (
-    <div
-      className="product-card animate-fade-in"
+    <motion.div
+      whileHover={{ y: -3, boxShadow: '0 8px 24px rgba(0,0,0,0.10)' }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+      className="product-card"
       onClick={() => navigate(`/product/${product.id}`)}
-      style={{ position: 'relative' }}
+      style={{ position: 'relative', cursor: 'pointer' }}
     >
       <div className="product-card-image-wrap">
         {product.image ? (
@@ -30,9 +35,13 @@ function ProductCard({ product }) {
           <Star style={{ width: 11, height: 11, fill: '#eab308', color: '#eab308' }} />
           <span style={{ fontSize: 11, color: 'var(--gray-400)', fontWeight: 600 }}>4.8</span>
         </div>
-        <div className="product-card-price">R$ {product.price?.toFixed(2)}</div>
+        <div className="product-card-price">
+          {product.has_variations && product.variations?.length > 0
+            ? `A partir de R$ ${Math.min(...product.variations.map(v => v.price)).toFixed(2)}`
+            : `R$ ${product.price?.toFixed(2)}`}
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -110,7 +119,7 @@ export default function MenuHome() {
       {/* ===== MOBILE layout (≤1023px) ===== */}
       <div className="mobile-menu-view">
         <div className="app-shell">
-          <div className="page-container">
+          <div className="page-container" style={{ paddingBottom: 140 }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28, paddingTop: 12 }}>
               <div>
                 <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--purple-400)', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 6 }}>
@@ -168,66 +177,105 @@ export default function MenuHome() {
 
       {/* ===== DESKTOP layout (≥1024px) ===== */}
       <div className="desktop-menu-view">
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '40px 48px 80px' }}>
+        <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--gray-50)' }}>
 
-          <HeroBanner />
+          {/* Left sidebar — categories */}
+          <aside style={{
+            width: 220, flexShrink: 0, background: '#fff',
+            borderRight: '1px solid var(--gray-150)',
+            padding: '32px 16px',
+            position: 'sticky', top: 0, height: '100vh', overflowY: 'auto',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '0 8px 24px', borderBottom: '1px solid var(--gray-100)', marginBottom: 20 }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: 10,
+                background: 'linear-gradient(135deg, var(--purple-500), var(--purple-700))',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <UtensilsCrossed style={{ width: 18, height: 18, color: '#fff' }} />
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 900, color: 'var(--gray-900)', letterSpacing: '-0.02em' }}>Cardápio</div>
+            </div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--gray-400)', letterSpacing: '0.08em', textTransform: 'uppercase', padding: '0 8px', marginBottom: 10 }}>
+              Categorias
+            </div>
+            {[{ id: null, name: 'Todos os Itens' }, ...categories].map(cat => (
+              <button
+                key={cat.id ?? 'all'}
+                onClick={() => setActiveCategory(cat.id)}
+                style={{
+                  display: 'flex', alignItems: 'center', width: '100%',
+                  padding: '9px 12px', borderRadius: 10, marginBottom: 2,
+                  background: activeCategory === cat.id ? 'var(--purple-50)' : 'transparent',
+                  color: activeCategory === cat.id ? 'var(--purple-700)' : 'var(--gray-500)',
+                  fontWeight: activeCategory === cat.id ? 700 : 500,
+                  fontSize: 13, border: 'none', cursor: 'pointer',
+                  textAlign: 'left', fontFamily: 'inherit',
+                  transition: 'background 0.15s, color 0.15s',
+                  position: 'relative',
+                }}
+              >
+                {activeCategory === cat.id && (
+                  <div style={{ position: 'absolute', left: 0, top: '20%', bottom: '20%', width: 3, borderRadius: '0 3px 3px 0', background: 'var(--purple-600)' }} />
+                )}
+                {cat.name}
+              </button>
+            ))}
+          </aside>
 
-          {/* Search + filter row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 28 }}>
-            <div style={{ flex: 1, maxWidth: 460 }}>
+          {/* Main content */}
+          <main style={{ flex: 1, padding: '40px 48px 80px', minWidth: 0 }}>
+            <HeroBanner />
+
+            {/* Search bar */}
+            <div style={{ maxWidth: 500, marginBottom: 32 }}>
               <SearchBar value={search} onChange={setSearch} placeholder="Buscar pratos..." />
             </div>
-            <div style={{ flex: 1 }}>
-              <CategoryPills categories={categories} activeId={activeCategory} onSelect={setActiveCategory} />
-            </div>
-          </div>
 
-          {isLoading ? (
-            <div className="loading-container"><div className="spinner" /></div>
-          ) : filtered.length === 0 ? (
-            <div className="empty-state">
-              <UtensilsCrossed />
-              <h3>Nenhum item encontrado</h3>
-              <p>Tente uma busca diferente ou outra categoria</p>
-            </div>
-          ) : (
-            <>
-              {/* Featured section */}
-              {!search && !activeCategory && featured.length > 0 && (
-                <div style={{ marginBottom: 44 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                    <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.02em', margin: 0 }}>
-                      ⭐ Mais Pedidos
-                    </h2>
-                    <span style={{ fontSize: 13, color: 'var(--purple-500)', fontWeight: 600 }}>
-                      {featured.length} destaques
-                    </span>
+            {isLoading ? (
+              <div className="loading-container"><div className="spinner" /></div>
+            ) : filtered.length === 0 ? (
+              <div className="empty-state">
+                <UtensilsCrossed />
+                <h3>Nenhum item encontrado</h3>
+                <p>Tente uma busca diferente ou outra categoria</p>
+              </div>
+            ) : (
+              <>
+                {!search && !activeCategory && featured.length > 0 && (
+                  <div style={{ marginBottom: 44 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                      <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.02em', margin: 0 }}>
+                        ⭐ Mais Pedidos
+                      </h2>
+                      <span style={{ fontSize: 13, color: 'var(--purple-500)', fontWeight: 600 }}>
+                        {featured.length} destaques
+                      </span>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 20 }}>
+                      {featured.map(p => <ProductCard key={p.id} product={p} />)}
+                    </div>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 20 }}>
-                    {featured.map(p => <ProductCard key={p.id} product={p} />)}
-                  </div>
+                )}
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                  <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.02em', margin: 0 }}>
+                    {activeCategory ? categories.find(c => c.id === activeCategory)?.name || 'Items' : (search ? 'Resultados' : 'Todos os Itens')}
+                  </h2>
+                  <span style={{ fontSize: 13, color: 'var(--gray-400)', fontWeight: 500 }}>{filtered.length} itens</span>
                 </div>
-              )}
 
-              {/* All items section */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.02em', margin: 0 }}>
-                  {activeCategory
-                    ? categories.find(c => c.id === activeCategory)?.name || 'Items'
-                    : (search ? 'Resultados' : 'Todos os Itens')}
-                </h2>
-                <span style={{ fontSize: 13, color: 'var(--gray-400)', fontWeight: 500 }}>
-                  {filtered.length} itens
-                </span>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 20 }}>
-                {nonFeaturedFiltered.map(p => <ProductCard key={p.id} product={p} />)}
-              </div>
-            </>
-          )}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 20 }}>
+                  {nonFeaturedFiltered.map(p => <ProductCard key={p.id} product={p} />)}
+                </div>
+              </>
+            )}
+          </main>
         </div>
       </div>
+
+      {/* Floating cart button — visible on both mobile and desktop */}
+      <FloatingCartButton />
 
       <style>{`
         .mobile-menu-view { display: block; }
