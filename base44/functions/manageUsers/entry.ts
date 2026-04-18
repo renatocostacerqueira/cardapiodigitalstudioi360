@@ -34,7 +34,10 @@ Deno.serve(async (req) => {
       const fakeEmail = `func${cpf}@restaurante.com.br`;
       await base44.auth.register({ email: fakeEmail, password, full_name: name });
 
-      // Atualiza role, cpf e custom_password
+      // Aguarda um momento para garantir que o registro foi processado
+      await new Promise(r => setTimeout(r, 800));
+
+      // Força a atualização do full_name e demais campos via service role
       const updated = await base44.asServiceRole.entities.User.list();
       const newUser = updated.find(u => u.email === fakeEmail);
       if (newUser) {

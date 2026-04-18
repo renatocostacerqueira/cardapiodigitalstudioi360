@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { UserPlus, Trash2, Edit2, ChefHat, Truck, X, Loader2, ShieldCheck } from 'lucide-react';
 
@@ -148,6 +148,15 @@ export default function ManageUsers() {
   const [modalUser, setModalUser] = useState(undefined);
   const [deletingId, setDeletingId] = useState(null);
   const [error, setError] = useState('');
+  const errorTimerRef = useRef(null);
+
+  const showError = (msg) => {
+    setError(msg);
+    if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+    errorTimerRef.current = setTimeout(() => setError(''), 4000);
+  };
+
+  React.useEffect(() => () => { if (errorTimerRef.current) clearTimeout(errorTimerRef.current); }, []);
 
   const loadUsers = async () => {
     setLoading(true);
@@ -155,7 +164,7 @@ export default function ManageUsers() {
       const res = await base44.functions.invoke('manageUsers', { action: 'list' });
       setUsers(res.data?.users || []);
     } catch {
-      setError('Erro ao carregar funcionários.');
+      showError('Erro ao carregar funcionários.');
     } finally {
       setLoading(false);
     }
@@ -170,7 +179,7 @@ export default function ManageUsers() {
       await base44.functions.invoke('manageUsers', { action: 'delete', userId });
       await loadUsers();
     } catch {
-      setError('Erro ao remover funcionário.');
+      showError('Erro ao remover funcionário.');
     } finally {
       setDeletingId(null);
     }
