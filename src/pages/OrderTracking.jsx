@@ -164,8 +164,11 @@ export default function OrderTracking() {
                   <div className="info-value">{PAYMENT_LABELS[order.payment_method] || order.payment_method}</div>
                 </div>
                 {order.payment_method === 'cash_change' && order.change_amount > 0 && (
-                  <div style={{ background: 'var(--orange-50)', border: '1px solid #fed7aa', borderRadius: 'var(--r-sm)', padding: '6px 12px', fontSize: 13, color: '#c2410c', fontWeight: 700 }}>
-                    Troco: R$ {(order.change_amount - order.total_price).toFixed(2)}
+                  <div style={{ background: 'var(--orange-50)', border: '1px solid #fed7aa', borderRadius: 'var(--r-sm)', padding: '6px 12px', fontSize: 13, color: '#c2410c', fontWeight: 700, textAlign: 'right' }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: '#9a3412', marginBottom: 2 }}>Pagará com</div>
+                    R$ {Number(order.change_amount).toFixed(2)}
+                    <div style={{ fontSize: 11, fontWeight: 600, color: '#9a3412', marginTop: 4, marginBottom: 2 }}>Você receberá de troco</div>
+                    R$ {(order.change_amount - order.total_price).toFixed(2)}
                   </div>
                 )}
               </div>
