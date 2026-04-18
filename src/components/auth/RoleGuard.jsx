@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import EmployeeAccessModal from './EmployeeAccessModal';
 
 function getSession() {
@@ -10,7 +11,14 @@ function getSession() {
   }
 }
 
+const ROLE_HOME = {
+  admin: '/admin',
+  cozinha: '/kitchen',
+  entregador: '/delivery',
+};
+
 export default function RoleGuard({ allowedRoles, children }) {
+  const navigate = useNavigate();
   const [employee, setEmployee] = useState(getSession);
   const [checked, setChecked] = useState(false);
 
@@ -32,7 +40,14 @@ export default function RoleGuard({ allowedRoles, children }) {
   if (!hasAccess) {
     return (
       <EmployeeAccessModal
-        onSuccess={(emp) => setEmployee(emp)}
+        onSuccess={(emp) => {
+          setEmployee(emp);
+          // Se o perfil logado não tem acesso a esta rota, redireciona para a rota dele
+          if (!allowedRoles.includes(emp.role)) {
+            const target = ROLE_HOME[emp.role];
+            if (target) navigate(target, { replace: true });
+          }
+        }}
       />
     );
   }
