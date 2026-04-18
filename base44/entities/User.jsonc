@@ -1,0 +1,17 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "cozinha",
+        "entregador",
+        "user"
+      ],
+      "default": "user",
+      "description": "Perfil de acesso do usu\u00e1rio"
+    }
+  }
+}

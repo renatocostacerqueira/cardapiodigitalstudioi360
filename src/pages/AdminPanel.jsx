@@ -6,7 +6,7 @@ import {
   ChefHat, Truck, Settings, ShoppingBag, Tag, Package,
   ClipboardList, TrendingUp, CheckCircle2, AlertCircle,
   UtensilsCrossed, Search, Store, CreditCard, MapPin,
-  Phone, User, MessageSquare, ChevronDown, X
+  Phone, User, MessageSquare, ChevronDown, X, Users
 } from 'lucide-react';
 import StatusBadge from '../components/shared/StatusBadge';
 import moment from 'moment';
@@ -49,6 +49,7 @@ const NAV_GROUPS = [
     items: [
       { to: '/admin/products', label: 'Produtos', icon: Package, color: 'var(--green-500)', bg: 'var(--green-50)' },
       { to: '/admin/categories', label: 'Categorias', icon: Tag, color: 'var(--yellow-500)', bg: 'var(--yellow-50)' },
+      { to: '/admin/users', label: 'Funcionários', icon: Users, color: 'var(--blue-500)', bg: 'var(--blue-50)' },
       { to: '/admin/settings', label: 'Configurações', icon: Settings, color: 'var(--gray-600)', bg: 'var(--gray-100)' },
     ],
   },

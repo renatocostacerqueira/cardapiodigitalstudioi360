@@ -20,6 +20,8 @@ import AdminPanel, { AdminOrdersView } from './pages/AdminPanel';
 import ManageProducts from './pages/admin/ManageProducts';
 import ManageCategories from './pages/admin/ManageCategories';
 import RestaurantSettings from './pages/admin/RestaurantSettings';
+import ManageUsers from './pages/admin/ManageUsers';
+import RoleGuard from './components/auth/RoleGuard';
 import KitchenTicketPrint from './pages/KitchenTicketPrint';
 import DeliveryTicketPrint from './pages/DeliveryTicketPrint';
 import OrderTracking from './pages/OrderTracking';
@@ -58,16 +60,17 @@ const AuthenticatedApp = () => {
           <Route path="/tracking/:id" element={<OrderTracking />} />
         </Route>
 
-        {/* Staff / admin pages */}
-        <Route path="/kitchen" element={<KitchenPanel />} />
-        <Route path="/delivery" element={<DeliveryPanel />} />
+        {/* Staff / admin pages — protected by role */}
+        <Route path="/kitchen" element={<RoleGuard allowedRoles={['admin', 'cozinha']}><KitchenPanel /></RoleGuard>} />
+        <Route path="/delivery" element={<RoleGuard allowedRoles={['admin', 'entregador']}><DeliveryPanel /></RoleGuard>} />
 
         {/* Admin — nested routes, sidebar always visible on desktop */}
-        <Route path="/admin" element={<AdminPanel />}>
+        <Route path="/admin" element={<RoleGuard allowedRoles={['admin']}><AdminPanel /></RoleGuard>}>
           <Route path="orders" element={<AdminOrdersView />} />
           <Route path="products" element={<ManageProducts />} />
           <Route path="categories" element={<ManageCategories />} />
           <Route path="settings" element={<RestaurantSettings />} />
+          <Route path="users" element={<ManageUsers />} />
         </Route>
         <Route path="/ticket/kitchen/:id" element={<KitchenTicketPrint />} />
         <Route path="/ticket/delivery/:id" element={<DeliveryTicketPrint />} />
