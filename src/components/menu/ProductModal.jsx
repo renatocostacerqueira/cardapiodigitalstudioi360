@@ -58,13 +58,15 @@ export default function ProductModal({ product, onClose }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+            onClick={e => e.stopPropagation()}
             style={{
               position: 'fixed',
-              top: '50%', left: '50%',
-              transform: 'translate(-50%, -50%)',
+              top: 0, left: 0, right: 0, bottom: 0,
+              margin: 'auto',
               zIndex: 1001,
               width: '90%',
               maxWidth: 560,
+              height: 'fit-content',
               maxHeight: '90vh',
               overflowY: 'auto',
               background: '#fff',
