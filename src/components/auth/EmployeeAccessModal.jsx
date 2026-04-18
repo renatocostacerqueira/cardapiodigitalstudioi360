@@ -26,9 +26,13 @@ export default function EmployeeAccessModal({ onSuccess }) {
       if (res.data?.success) {
         localStorage.setItem('employee_session', JSON.stringify(res.data.employee));
         onSuccess(res.data.employee);
+      } else {
+        setError(res.data?.error || 'CPF ou senha inválidos.');
       }
     } catch (err) {
-      setError(err?.response?.data?.error || 'CPF ou senha inválidos.');
+      console.error('[EmployeeAccessModal] Erro no login:', err);
+      const backendError = err?.response?.data?.error;
+      setError(backendError || err?.message || 'Erro ao conectar. Tente novamente.');
     } finally {
       setLoading(false);
     }
