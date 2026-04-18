@@ -61,21 +61,24 @@ export default function ProductModal({ product, onClose }) {
             onClick={e => e.stopPropagation()}
             style={{
               position: 'fixed',
-              top: 0, left: 0, right: 0, bottom: 0,
-              margin: 'auto',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
               zIndex: 1001,
               width: '90%',
               maxWidth: 560,
-              height: 'fit-content',
-              maxHeight: '90vh',
-              overflowY: 'auto',
+              height: 'auto',
+              maxHeight: '88vh',
+              display: 'flex',
+              flexDirection: 'column',
               background: '#fff',
               borderRadius: 28,
               boxShadow: '0 32px 80px rgba(0,0,0,0.22)',
+              overflow: 'hidden',
             }}
           >
-            {/* Image */}
-            <div style={{ position: 'relative', width: '100%', height: 280, background: 'var(--gray-100)', flexShrink: 0 }}>
+            {/* Image — fixed height, never scrolls */}
+            <div style={{ position: 'relative', width: '100%', height: 240, background: 'var(--gray-100)', flexShrink: 0 }}>
               {product.image ? (
                 <img
                   src={product.image}
@@ -122,8 +125,8 @@ export default function ProductModal({ product, onClose }) {
               </div>
             </div>
 
-            {/* Content */}
-            <div style={{ padding: '24px 24px 32px' }}>
+            {/* Content — scrollable */}
+            <div style={{ padding: '24px 24px 32px', overflowY: 'auto', flex: 1 }}>
               {/* Name & Price */}
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
                 <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.03em', lineHeight: 1.25, flex: 1 }}>
