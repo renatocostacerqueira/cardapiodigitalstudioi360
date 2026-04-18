@@ -379,7 +379,7 @@ export default function Checkout() {
                       animate={{ opacity: 1, y: 0 }}
                       style={{ marginTop: 8, padding: '10px 14px', background: 'var(--green-50)', borderRadius: 'var(--r-md)', border: '1px solid #bbf7d0' }}
                     >
-                      <div style={{ fontSize: 12, color: 'var(--green-600)', fontWeight: 600, marginBottom: 2 }}>Troco a devolver</div>
+                      <div style={{ fontSize: 12, color: 'var(--green-600)', fontWeight: 600, marginBottom: 2 }}>Você receberá de troco:</div>
                       <div style={{ fontSize: 20, fontWeight: 900, color: 'var(--green-600)', letterSpacing: '-0.02em' }}>
                         R$ {(changeAmountNum - grandTotal).toFixed(2)}
                       </div>
