@@ -30,24 +30,30 @@ Deno.serve(async (req) => {
         return Response.json({ error: 'Já existe um funcionário com este CPF.' }, { status: 400 });
       }
 
-      // Cria o registro de usuário com email fictício baseado no CPF
+      // Cria o registro com email fictício baseado no CPF
       const fakeEmail = `func${cpf}@restaurante.com.br`;
-      await base44.auth.register({ email: fakeEmail, password, full_name: name });
+      await base44.auth.register({ email: fakeEmail, password });
 
-      // Aguarda um momento para garantir que o registro foi processado
-      await new Promise(r => setTimeout(r, 800));
-
-      // Força a atualização do full_name e demais campos via service role
-      const updated = await base44.asServiceRole.entities.User.list();
-      const newUser = updated.find(u => u.email === fakeEmail);
-      if (newUser) {
-        await base44.asServiceRole.entities.User.update(newUser.id, {
-          role,
-          cpf,
-          custom_password: password,
-          full_name: name,
-        });
+      // Retry: localiza o usuário recém-criado
+      let newUser = null;
+      for (let i = 0; i < 6; i++) {
+        await new Promise(r => setTimeout(r, 500));
+        const updated = await base44.asServiceRole.entities.User.list();
+        newUser = updated.find(u => u.email === fakeEmail);
+        if (newUser) break;
       }
+
+      if (!newUser) {
+        return Response.json({ error: 'Falha ao criar o funcionário. Tente novamente.' }, { status: 500 });
+      }
+
+      // Salva os dados customizados (display_name é nosso campo, full_name é da plataforma)
+      await base44.asServiceRole.entities.User.update(newUser.id, {
+        role,
+        cpf,
+        custom_password: password,
+        display_name: name,
+      });
 
       return Response.json({ success: true });
     }
@@ -62,7 +68,7 @@ Deno.serve(async (req) => {
       if (role) updateData.role = role;
       if (cpf) updateData.cpf = cpf;
       if (password) updateData.custom_password = password;
-      if (name) updateData.full_name = name;
+      if (name) updateData.display_name = name;
 
       await base44.asServiceRole.entities.User.update(userId, updateData);
       return Response.json({ success: true });

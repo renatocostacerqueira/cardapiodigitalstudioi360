@@ -36,7 +36,7 @@ function formatCpf(value) {
 function UserFormModal({ user, onClose, onSaved }) {
   const isEdit = !!user;
   const [form, setForm] = useState({
-    name: user?.full_name || '',
+    name: user?.display_name || user?.full_name || '',
     cpf: user?.cpf ? formatCpf(user.cpf) : '',
     password: user?.custom_password || '',
     role: user?.role || 'cozinha',
@@ -223,13 +223,13 @@ export default function ManageUsers() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                 }}>
                   <span style={{ fontSize: 17, fontWeight: 800, color: ROLE_LABELS[u.role]?.color || 'var(--gray-500)' }}>
-                    {(u.full_name || '?')[0].toUpperCase()}
+                    {(u.display_name || u.full_name || '?')[0].toUpperCase()}
                   </span>
                 </div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--gray-900)', marginBottom: 3 }}>
-                    {u.full_name || '(sem nome)'}
+                    {u.display_name || u.full_name || '(sem nome)'}
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--gray-400)', marginBottom: 6 }}>
                     CPF: {u.cpf ? formatCpf(u.cpf) : '—'}
