@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, Truck, Store, Banknote, CreditCard, QrCode, ChevronRight, AlertCircle, Landmark } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -91,6 +91,8 @@ export default function Checkout() {
   const [notes, setNotes] = useState('');
   const [deliveryNotes, setDeliveryNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => { window.scrollTo(0, 0); }, []);
 
   const [address, setAddress] = useState({
     street: '', number: '', complement: '',
@@ -205,7 +207,7 @@ export default function Checkout() {
 
   return (
     <div className="app-shell">
-      <div className="page-container" style={{ paddingBottom: 40 }}>
+      <div className="page-container" style={{ paddingBottom: 120 }}>
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="page-header">
           <button className="back-btn" onClick={() => navigate('/cart')} aria-label="Voltar">
             <ArrowLeft style={{ width: 20, height: 20 }} />

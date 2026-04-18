@@ -24,6 +24,8 @@ export default function ProductDetail() {
     },
   });
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   useEffect(() => {
     if (product?.has_variations && product.variations?.length > 0) {
       setSelectedVariation(product.variations[0]);

@@ -17,6 +17,8 @@ export default function OrderTracking() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   useEffect(() => {
     base44.entities.Order.filter({ id }).then(orders => {
       setOrder(orders[0]);

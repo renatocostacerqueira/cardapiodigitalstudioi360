@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Trash2, ImageOff, ChevronRight, Pencil } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -117,6 +117,8 @@ export default function Cart() {
   const navigate = useNavigate();
   const { items, updateQuantity, updateItem, removeItem, totalPrice } = useCart();
   const [editingIndex, setEditingIndex] = useState(null);
+
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   const cartItemIds = items.map(i => i.product_id);
 
   return (
