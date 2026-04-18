@@ -15,7 +15,7 @@ Deno.serve(async (req) => {
     // ── LIST ──────────────────────────────────────────────────────────────────
     if (action === 'list') {
       const users = await base44.asServiceRole.entities.User.list();
-      const staff = users.filter(u => u.role === 'cozinha' || u.role === 'entregador');
+      const staff = users.filter(u => ['admin', 'cozinha', 'entregador'].includes(u.role));
       return Response.json({ users: staff });
     }
 
@@ -25,8 +25,8 @@ Deno.serve(async (req) => {
       if (!email || !password || !name || !role) {
         return Response.json({ error: 'Campos obrigatórios: email, senha, nome e perfil.' }, { status: 400 });
       }
-      if (!['cozinha', 'entregador'].includes(role)) {
-        return Response.json({ error: 'Perfil inválido. Use: cozinha ou entregador' }, { status: 400 });
+      if (!['admin', 'cozinha', 'entregador'].includes(role)) {
+        return Response.json({ error: 'Perfil inválido. Use: admin, cozinha ou entregador' }, { status: 400 });
       }
 
       // Cria o usuário com e-mail e senha definidos pelo administrador
@@ -48,8 +48,8 @@ Deno.serve(async (req) => {
       if (!userId || !role) {
         return Response.json({ error: 'userId e role são obrigatórios' }, { status: 400 });
       }
-      if (!['cozinha', 'entregador'].includes(role)) {
-        return Response.json({ error: 'Perfil inválido. Use: cozinha ou entregador' }, { status: 400 });
+      if (!['admin', 'cozinha', 'entregador'].includes(role)) {
+        return Response.json({ error: 'Perfil inválido. Use: admin, cozinha ou entregador' }, { status: 400 });
       }
       await base44.asServiceRole.entities.User.update(userId, { role });
       return Response.json({ success: true });

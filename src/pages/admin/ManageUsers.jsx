@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { UserPlus, Trash2, Edit2, ChefHat, Truck, X, Check, Loader2 } from 'lucide-react';
+import { UserPlus, Trash2, Edit2, ChefHat, Truck, X, Check, Loader2, ShieldCheck } from 'lucide-react';
 
 const ROLE_LABELS = {
+  admin: { label: 'Admin', color: '#1d4ed8', bg: '#eff6ff', icon: ShieldCheck },
   cozinha: { label: 'Cozinha', color: 'var(--orange-500)', bg: 'var(--orange-50)', icon: ChefHat },
   entregador: { label: 'Entregador', color: 'var(--purple-600)', bg: 'var(--purple-50)', icon: Truck },
 };
@@ -30,7 +31,7 @@ function UserFormModal({ user, onClose, onSaved }) {
     name: user?.full_name || '',
     email: user?.email || '',
     password: '',
-    role: user?.role || 'cozinha',
+    role: user?.role || 'admin',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -88,6 +89,7 @@ function UserFormModal({ user, onClose, onSaved }) {
           <div className="input-group">
             <label className="input-label">Perfil</label>
             <select className="input-field" value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))}>
+              <option value="admin">Admin</option>
               <option value="cozinha">Cozinha</option>
               <option value="entregador">Entregador</option>
             </select>
