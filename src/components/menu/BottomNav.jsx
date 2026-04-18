@@ -1,7 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, ShoppingCart, ClipboardList } from 'lucide-react';
-...
+import { useCart } from '../../context/CartContext';
+
+export default function BottomNav() {
+  const location = useLocation();
+  const { totalItems } = useCart();
+  const path = location.pathname;
+
   const navItems = [
     { to: '/', icon: Home, label: 'Cardápio' },
     { to: '/cart', icon: ShoppingCart, label: 'Carrinho', badge: totalItems },
