@@ -7,11 +7,18 @@
       "enum": [
         "admin",
         "cozinha",
-        "entregador",
-        "user"
+        "entregador"
       ],
-      "default": "user",
-      "description": "Perfil de acesso do usu\u00e1rio"
+      "default": "admin",
+      "description": "Perfil de acesso do funcion\u00e1rio"
+    },
+    "cpf": {
+      "type": "string",
+      "description": "CPF do funcion\u00e1rio (usado para login simplificado)"
+    },
+    "custom_password": {
+      "type": "string",
+      "description": "Senha definida pelo administrador para acesso simplificado"
     }
   }
 }

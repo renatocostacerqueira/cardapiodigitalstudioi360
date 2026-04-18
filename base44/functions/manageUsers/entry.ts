@@ -3,12 +3,6 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-
-    if (!user || user.role !== 'admin') {
-      return Response.json({ error: 'Acesso negado. Apenas administradores.' }, { status: 403 });
-    }
-
     const body = await req.json();
     const { action } = body;
 
@@ -21,37 +15,53 @@ Deno.serve(async (req) => {
 
     // ── CREATE ────────────────────────────────────────────────────────────────
     if (action === 'create') {
-      const { email, password, name, role } = body;
-      if (!email || !password || !name || !role) {
-        return Response.json({ error: 'Campos obrigatórios: email, senha, nome e perfil.' }, { status: 400 });
+      const { name, cpf, password, role } = body;
+      if (!name || !cpf || !password || !role) {
+        return Response.json({ error: 'Campos obrigatórios: nome, CPF, senha e perfil.' }, { status: 400 });
       }
       if (!['admin', 'cozinha', 'entregador'].includes(role)) {
-        return Response.json({ error: 'Perfil inválido. Use: admin, cozinha ou entregador' }, { status: 400 });
+        return Response.json({ error: 'Perfil inválido.' }, { status: 400 });
       }
 
-      // Cria o usuário com e-mail e senha definidos pelo administrador
-      await base44.auth.register({ email, password, full_name: name });
+      // Verifica CPF duplicado
+      const all = await base44.asServiceRole.entities.User.list();
+      const exists = all.find(u => u.cpf === cpf);
+      if (exists) {
+        return Response.json({ error: 'Já existe um funcionário com este CPF.' }, { status: 400 });
+      }
 
-      // Após criar, busca o usuário para atualizar o role e full_name
-      const allUsers = await base44.asServiceRole.entities.User.list();
-      const newUser = allUsers.find(u => u.email === email);
+      // Cria o registro de usuário com email fictício baseado no CPF
+      const fakeEmail = `${cpf}@funcionario.local`;
+      await base44.auth.register({ email: fakeEmail, password, full_name: name });
+
+      // Atualiza role, cpf e custom_password
+      const updated = await base44.asServiceRole.entities.User.list();
+      const newUser = updated.find(u => u.email === fakeEmail);
       if (newUser) {
-        await base44.asServiceRole.entities.User.update(newUser.id, { role, full_name: name });
+        await base44.asServiceRole.entities.User.update(newUser.id, {
+          role,
+          cpf,
+          custom_password: password,
+          full_name: name,
+        });
       }
 
-      return Response.json({ success: true, message: 'Usuário criado com sucesso.' });
+      return Response.json({ success: true });
     }
 
-    // ── UPDATE ROLE ───────────────────────────────────────────────────────────
-    if (action === 'updateRole') {
-      const { userId, role } = body;
-      if (!userId || !role) {
-        return Response.json({ error: 'userId e role são obrigatórios' }, { status: 400 });
+    // ── UPDATE ────────────────────────────────────────────────────────────────
+    if (action === 'update') {
+      const { userId, role, cpf, password, name } = body;
+      if (!userId) {
+        return Response.json({ error: 'userId é obrigatório' }, { status: 400 });
       }
-      if (!['admin', 'cozinha', 'entregador'].includes(role)) {
-        return Response.json({ error: 'Perfil inválido. Use: admin, cozinha ou entregador' }, { status: 400 });
-      }
-      await base44.asServiceRole.entities.User.update(userId, { role });
+      const updateData = {};
+      if (role) updateData.role = role;
+      if (cpf) updateData.cpf = cpf;
+      if (password) updateData.custom_password = password;
+      if (name) updateData.full_name = name;
+
+      await base44.asServiceRole.entities.User.update(userId, updateData);
       return Response.json({ success: true });
     }
 

@@ -1,15 +1,25 @@
-import React from 'react';
-import { useAuth } from '@/lib/AuthContext';
-import { ShieldAlert } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import EmployeeAccessModal from './EmployeeAccessModal';
 
-/**
- * Protects a route/component by role.
- * allowedRoles: array of roles that can access (e.g. ['admin', 'cozinha'])
- */
+function getSession() {
+  try {
+    const raw = localStorage.getItem('employee_session');
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function RoleGuard({ allowedRoles, children }) {
-  const { user, isLoadingAuth } = useAuth();
+  const [employee, setEmployee] = useState(getSession);
+  const [checked, setChecked] = useState(false);
 
-  if (isLoadingAuth) {
+  useEffect(() => {
+    setEmployee(getSession());
+    setChecked(true);
+  }, []);
+
+  if (!checked) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
         <div className="spinner" />
@@ -17,31 +27,13 @@ export default function RoleGuard({ allowedRoles, children }) {
     );
   }
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  const hasAccess = employee && allowedRoles.includes(employee.role);
+
+  if (!hasAccess) {
     return (
-      <div style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        minHeight: '100vh', gap: 16, padding: 32, textAlign: 'center',
-        background: 'var(--gray-50)',
-      }}>
-        <div style={{
-          width: 64, height: 64, borderRadius: 'var(--r-full)',
-          background: 'var(--red-50)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <ShieldAlert style={{ width: 32, height: 32, color: 'var(--red-500)' }} />
-        </div>
-        <div>
-          <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--gray-900)', marginBottom: 6 }}>Acesso Negado</h2>
-          <p style={{ fontSize: 14, color: 'var(--gray-500)' }}>Você não tem permissão para acessar esta página.</p>
-        </div>
-        <a href="/" style={{
-          padding: '10px 24px', borderRadius: 'var(--r-full)',
-          background: 'var(--purple-600)', color: '#fff',
-          fontWeight: 700, fontSize: 14, textDecoration: 'none',
-        }}>
-          Voltar ao início
-        </a>
-      </div>
+      <EmployeeAccessModal
+        onSuccess={(emp) => setEmployee(emp)}
+      />
     );
   }
 
