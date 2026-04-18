@@ -29,6 +29,7 @@ function UserFormModal({ user, onClose, onSaved }) {
   const [form, setForm] = useState({
     name: user?.full_name || '',
     email: user?.email || '',
+    password: '',
     role: user?.role || 'cozinha',
   });
   const [loading, setLoading] = useState(false);
@@ -77,6 +78,10 @@ function UserFormModal({ user, onClose, onSaved }) {
                 <label className="input-label">E-mail</label>
                 <input className="input-field" type="email" placeholder="email@exemplo.com" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} required />
               </div>
+              <div className="input-group">
+                <label className="input-label">Senha</label>
+                <input className="input-field" type="password" placeholder="Senha de acesso" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} required />
+              </div>
             </>
           )}
 
@@ -90,7 +95,7 @@ function UserFormModal({ user, onClose, onSaved }) {
 
           {!isEdit && (
             <div style={{ padding: '12px 14px', borderRadius: 'var(--r-md)', background: 'var(--blue-50)', border: '1px solid #bfdbfe', fontSize: 13, color: '#1d4ed8', marginBottom: 16, lineHeight: 1.6 }}>
-              📧 O funcionário receberá um convite por e-mail para criar sua senha e acessar o sistema com o perfil selecionado.
+              🔑 O administrador define a senha de acesso. Informe ao funcionário o e-mail e a senha cadastrados.
             </div>
           )}
 

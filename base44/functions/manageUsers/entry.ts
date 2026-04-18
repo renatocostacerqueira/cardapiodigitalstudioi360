@@ -23,16 +23,23 @@ Deno.serve(async (req) => {
     if (action === 'create') {
       const { email, password, name, role } = body;
       if (!email || !password || !name || !role) {
-        return Response.json({ error: 'Campos obrigatórios: email, password, name, role' }, { status: 400 });
+        return Response.json({ error: 'Campos obrigatórios: email, senha, nome e perfil.' }, { status: 400 });
       }
       if (!['cozinha', 'entregador'].includes(role)) {
         return Response.json({ error: 'Perfil inválido. Use: cozinha ou entregador' }, { status: 400 });
       }
 
-      // Invite the user via the SDK (creates account with role)
-      await base44.asServiceRole.users.inviteUser(email, role);
+      // Cria o usuário com e-mail e senha definidos pelo administrador
+      await base44.auth.register({ email, password });
 
-      return Response.json({ success: true, message: 'Usuário convidado com sucesso.' });
+      // Após criar, busca o usuário para atualizar o role
+      const allUsers = await base44.asServiceRole.entities.User.list();
+      const newUser = allUsers.find(u => u.email === email);
+      if (newUser) {
+        await base44.asServiceRole.entities.User.update(newUser.id, { role });
+      }
+
+      return Response.json({ success: true, message: 'Usuário criado com sucesso.' });
     }
 
     // ── UPDATE ROLE ───────────────────────────────────────────────────────────
