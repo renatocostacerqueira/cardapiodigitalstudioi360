@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
       }
 
       // Cria o registro de usuário com email fictício baseado no CPF
-      const fakeEmail = `${cpf}@funcionario.local`;
+      const fakeEmail = `func${cpf}@restaurante.com.br`;
       await base44.auth.register({ email: fakeEmail, password, full_name: name });
 
       // Atualiza role, cpf e custom_password
