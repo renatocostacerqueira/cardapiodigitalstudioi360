@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Pencil, Trash2, ImageOff, Star, Eye, EyeOff, Search, Loader2, X, PlusCircle, MinusCircle } from 'lucide-react';
+import { Plus, Pencil, Trash2, ImageOff, Star, Eye, EyeOff, Search, Loader2, PlusCircle, MinusCircle } from 'lucide-react';
+import ModalShell from '../../components/admin/ModalShell';
 
 function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categories }) {
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -18,17 +19,8 @@ function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categor
   const f = (key) => (e) => setForm(prev => ({ ...prev, [key]: e.target.value }));
 
   return (
-    <div className="card animate-fade-in" style={{ marginBottom: 24 }}>
-      <div className="card-body">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--gray-900)' }}>
-            {editing ? 'Editar Produto' : 'Novo Produto'}
-          </h3>
-          <button onClick={onCancel} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gray-400)', padding: 4 }}>
-            <X style={{ width: 20, height: 20 }} />
-          </button>
-        </div>
-
+    <ModalShell title={editing ? 'Editar Produto' : 'Novo Produto'} onClose={onCancel} maxWidth={760}>
+      <div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
           <div>
             <div className="input-group">
@@ -178,7 +170,7 @@ function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categor
           </div>
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 }
 
