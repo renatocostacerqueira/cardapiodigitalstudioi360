@@ -9,6 +9,7 @@ import {
   Phone, User, MessageSquare, ChevronDown, X, Users
 } from 'lucide-react';
 import StatusBadge from '../components/shared/StatusBadge';
+import SendWhatsAppButton from '../components/shared/SendWhatsAppButton';
 import moment from 'moment';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
@@ -257,7 +258,7 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
           {/* Status Update */}
           <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: 18 }}>
             <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 10 }}>Atualizar Status</div>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
               <select className="input-field" value={newStatus} onChange={e => setNewStatus(e.target.value)} style={{ flex: 1 }}>
                 {STATUSES.filter(s => s.value).map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
               </select>
@@ -265,6 +266,13 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
                 Atualizar
               </button>
             </div>
+            <SendWhatsAppButton
+              orderId={order.id}
+              orderNumber={order.order_number}
+              customerName={order.customer_name}
+              phone={order.customer_phone}
+              label="Enviar link de rastreio por WhatsApp"
+            />
           </div>
         </div>
       </div>

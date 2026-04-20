@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import StatusBadge from '../components/shared/StatusBadge';
 import OrderTracker from '../components/order/OrderTracker';
 import LiveTrackingMap from '../components/delivery/LiveTrackingMap';
+import SendWhatsAppButton from '../components/shared/SendWhatsAppButton';
 
 const PAYMENT_LABELS = {
   cash: 'Dinheiro', cash_change: 'Dinheiro (com troco)', pix: 'PIX', debit: 'Cartão de Débito', credit: 'Cartão de Crédito',
@@ -212,9 +213,16 @@ export default function OrderTracking() {
           </div>
         </motion.div>
 
-        <button className="btn btn-outline btn-lg" onClick={() => navigate('/')} style={{ borderRadius: 'var(--r-full)' }}>
-          Voltar ao Cardápio
-        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <SendWhatsAppButton
+            orderId={order.id}
+            orderNumber={order.order_number}
+            customerName={order.customer_name}
+          />
+          <button className="btn btn-outline btn-lg" onClick={() => navigate('/')} style={{ borderRadius: 'var(--r-full)' }}>
+            Voltar ao Cardápio
+          </button>
+        </div>
       </div>
       <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }`}</style>
     </div>

@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { CheckCircle, Home, Navigation, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 import StatusBadge from '../components/shared/StatusBadge';
+import SendWhatsAppButton from '../components/shared/SendWhatsAppButton';
 
 export default function OrderConfirmation() {
   const { id } = useParams();
@@ -163,6 +164,12 @@ export default function OrderConfirmation() {
             <Navigation style={{ width: 18, height: 18 }} />
             Acompanhe seu Pedido
           </motion.button>
+
+          <SendWhatsAppButton
+            orderId={order.id}
+            orderNumber={order.order_number}
+            customerName={order.customer_name}
+          />
 
           <button
             className="btn btn-outline btn-lg"
