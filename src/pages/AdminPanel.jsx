@@ -4,13 +4,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import {
   ChefHat, Truck, Settings, ShoppingBag, Tag, Package,
-  CheckCircle2, AlertCircle,
+  CheckCircle2, AlertCircle, BarChart3,
   UtensilsCrossed, Search, Store, CreditCard, MapPin,
   Phone, User, MessageSquare, ChevronDown, X, Users
 } from 'lucide-react';
 import StatusBadge from '../components/shared/StatusBadge';
 import SendWhatsAppButton from '../components/shared/SendWhatsAppButton';
-import DashboardMetrics from '../components/admin/DashboardMetrics';
 import moment from 'moment';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
@@ -36,6 +35,7 @@ const NAV_GROUPS = [
     section: 'Dashboard',
     items: [
       { to: '/admin', label: 'Visão Geral', icon: AlertCircle, color: 'var(--blue-500)', bg: 'var(--blue-50)', exact: true },
+      { to: '/admin/metrics', label: 'Métricas', icon: BarChart3, color: 'var(--purple-600)', bg: 'var(--purple-50)' },
     ],
   },
   {
@@ -386,7 +386,30 @@ function OrdersList({ orders, isLoading }) {
 
 // ─── Dashboard Home ───────────────────────────────────────────────────────────
 
+function StatCard({ icon: Icon, label, value, color, bg }) {
+  return (
+    <div className="card">
+      <div className="card-body" style={{ padding: '18px 20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--gray-400)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
+          <div style={{ width: 32, height: 32, borderRadius: 'var(--r-sm)', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon style={{ width: 16, height: 16, color }} />
+          </div>
+        </div>
+        <div style={{ fontSize: 32, fontWeight: 900, color, letterSpacing: '-0.03em', lineHeight: 1 }}>{value}</div>
+      </div>
+    </div>
+  );
+}
+
 function DashboardHome({ orders, isLoading }) {
+  const newOrders = orders.filter(o => o.status === 'new').length;
+  const preparing = orders.filter(o => o.status === 'in_preparation').length;
+  const ready = orders.filter(o => o.status === 'ready').length;
+  const delivering = orders.filter(o => o.status === 'out_for_delivery').length;
+  const completed = orders.filter(o => ['delivered', 'picked_up'].includes(o.status)).length;
+  const cancelled = orders.filter(o => o.status === 'cancelled').length;
+
   return (
     <div style={{ padding: '32px 36px' }}>
       <div style={{ marginBottom: 24 }}>
@@ -394,7 +417,13 @@ function DashboardHome({ orders, isLoading }) {
         <p style={{ fontSize: 13, color: 'var(--gray-400)' }}>{moment().format('dddd, DD [de] MMMM [de] YYYY')}</p>
       </div>
 
-      <DashboardMetrics orders={orders} />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 14, marginBottom: 32 }}>
+        <StatCard label="Novos Pedidos" value={newOrders} color="var(--blue-500)" bg="var(--blue-50)" icon={AlertCircle} />
+        <StatCard label="Em Preparo" value={preparing} color="var(--orange-500)" bg="var(--orange-50)" icon={ChefHat} />
+        <StatCard label="Pronto / Entrega" value={ready + delivering} color="var(--purple-600)" bg="var(--purple-50)" icon={Truck} />
+        <StatCard label="Concluídos Hoje" value={completed} color="var(--green-600)" bg="var(--green-50)" icon={CheckCircle2} />
+        <StatCard label="Cancelados" value={cancelled} color="var(--red-500)" bg="var(--red-50)" icon={X} />
+      </div>
 
       <div style={{ marginBottom: 16 }}>
         <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--gray-800)', letterSpacing: '-0.02em' }}>Todos os Pedidos</h2>

@@ -21,6 +21,7 @@ import ManageProducts from './pages/admin/ManageProducts';
 import ManageCategories from './pages/admin/ManageCategories';
 import RestaurantSettings from './pages/admin/RestaurantSettings';
 import ManageUsers from './pages/admin/ManageUsers';
+import Metrics from './pages/admin/Metrics';
 import RoleGuard from './components/auth/RoleGuard';
 import KitchenTicketPrint from './pages/KitchenTicketPrint';
 import DeliveryTicketPrint from './pages/DeliveryTicketPrint';
@@ -66,6 +67,7 @@ const AuthenticatedApp = () => {
 
         {/* Admin — nested routes, sidebar always visible on desktop */}
         <Route path="/admin" element={<RoleGuard allowedRoles={['admin']}><AdminPanel /></RoleGuard>}>
+          <Route path="metrics" element={<Metrics />} />
           <Route path="products" element={<ManageProducts />} />
           <Route path="categories" element={<ManageCategories />} />
           <Route path="settings" element={<RestaurantSettings />} />
