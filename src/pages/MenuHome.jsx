@@ -7,11 +7,13 @@ import SearchBar from '../components/menu/SearchBar';
 import CategoryPills from '../components/menu/CategoryPills';
 import FloatingCartButton from '../components/menu/FloatingCartButton';
 import ProductModal from '../components/menu/ProductModal';
-import { UtensilsCrossed, ImageOff, Star, Zap, Clock, ShieldCheck, Lock } from 'lucide-react';
+import { UtensilsCrossed, ImageOff, Zap, Clock, ShieldCheck, Lock } from 'lucide-react';
 import RestaurantHeader from '../components/menu/RestaurantHeader';
 import ClosedBanner from '../components/menu/ClosedBanner';
+import ProductRatingBadge from '../components/product/ProductRatingBadge';
+import FavoriteButton from '../components/product/FavoriteButton';
 
-function ProductCard({ product, onClick }) {
+function ProductCard({ product, onClick, enableFavorites, enableReviews }) {
   return (
     <motion.div
       whileHover={{ y: -3, boxShadow: '0 8px 24px rgba(0,0,0,0.10)' }}
@@ -21,6 +23,11 @@ function ProductCard({ product, onClick }) {
       onClick={() => onClick(product)}
       style={{ position: 'relative', cursor: 'pointer' }}
     >
+      {enableFavorites && (
+        <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 2 }} onClick={e => e.stopPropagation()}>
+          <FavoriteButton productId={product.id} size={15} style={{ width: 32, height: 32 }} />
+        </div>
+      )}
       <div className="product-card-image-wrap">
         {product.image ? (
           <img src={product.image} alt={product.name} className="product-card-image" loading="lazy" width="200" height="200" />
@@ -33,10 +40,11 @@ function ProductCard({ product, onClick }) {
       </div>
       <div className="product-card-body">
         <div className="product-card-name">{product.name}</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
-          <Star style={{ width: 11, height: 11, fill: '#eab308', color: '#eab308' }} />
-          <span style={{ fontSize: 11, color: 'var(--gray-400)', fontWeight: 600 }}>4.8</span>
-        </div>
+        {enableReviews && (
+          <div style={{ marginTop: 4 }}>
+            <ProductRatingBadge productId={product.id} size={11} />
+          </div>
+        )}
         <div className="product-card-price">
           {product.has_variations && product.variations?.length > 0
             ? `A partir de R$ ${Math.min(...product.variations.map(v => v.price)).toFixed(2)}`
@@ -127,6 +135,8 @@ export default function MenuHome() {
   });
   const restaurant = restaurants[0];
   const isClosed = restaurant && restaurant.active === false;
+  const enableFavorites = !!restaurant?.enable_favorites;
+  const enableReviews = !!restaurant?.enable_reviews;
 
   const filtered = products.filter(p => {
     const matchesSearch = !search || p.name?.toLowerCase().includes(search.toLowerCase());
@@ -139,7 +149,10 @@ export default function MenuHome() {
 
   const productGrid = (items) => (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 20 }}>
-      {items.map(p => <ProductCard key={p.id} product={p} onClick={handleProductClick} />)}
+      {items.map(p => (
+        <ProductCard key={p.id} product={p} onClick={handleProductClick}
+          enableFavorites={enableFavorites} enableReviews={enableReviews} />
+      ))}
     </div>
   );
 
@@ -167,7 +180,10 @@ export default function MenuHome() {
                   <div style={{ marginBottom: 28 }}>
                     <h2 className="section-title">Mais Pedidos</h2>
                     <div className="product-grid">
-                      {featured.map(p => <ProductCard key={p.id} product={p} onClick={handleProductClick} />)}
+                      {featured.map(p => (
+                        <ProductCard key={p.id} product={p} onClick={handleProductClick}
+                          enableFavorites={enableFavorites} enableReviews={enableReviews} />
+                      ))}
                     </div>
                   </div>
                 )}
@@ -178,7 +194,10 @@ export default function MenuHome() {
                   <span style={{ fontSize: 12, color: 'var(--gray-400)', fontWeight: 500 }}>{filtered.length} items</span>
                 </div>
                 <div className="product-grid">
-                  {nonFeaturedFiltered.map(p => <ProductCard key={p.id} product={p} onClick={handleProductClick} />)}
+                  {nonFeaturedFiltered.map(p => (
+                    <ProductCard key={p.id} product={p} onClick={handleProductClick}
+                      enableFavorites={enableFavorites} enableReviews={enableReviews} />
+                  ))}
                 </div>
               </>
             )}

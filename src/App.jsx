@@ -26,6 +26,7 @@ import RoleGuard from './components/auth/RoleGuard';
 import KitchenTicketPrint from './pages/KitchenTicketPrint';
 import DeliveryTicketPrint from './pages/DeliveryTicketPrint';
 import OrderTracking from './pages/OrderTracking';
+import Favorites from './pages/Favorites';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -58,6 +59,7 @@ const AuthenticatedApp = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/confirmation/:id" element={<OrderConfirmation />} />
           <Route path="/orders" element={<MyOrders />} />
+          <Route path="/favorites" element={<Favorites />} />
           <Route path="/tracking/:id" element={<OrderTracking />} />
         </Route>
 

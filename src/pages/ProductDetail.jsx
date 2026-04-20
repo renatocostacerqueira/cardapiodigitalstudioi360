@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Heart, ShoppingCart, ImageOff, Star, Sparkles } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, ImageOff } from 'lucide-react';
 import QuantitySelector from '../components/menu/QuantitySelector';
 import { useCart } from '../context/CartContext';
+import ProductCustomizer from '../components/product/ProductCustomizer';
+import FavoriteButton from '../components/product/FavoriteButton';
+import ProductReviews from '../components/product/ProductReviews';
+import ProductRatingBadge from '../components/product/ProductRatingBadge';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -13,8 +17,9 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState('');
   const [added, setAdded] = useState(false);
-  const [liked, setLiked] = useState(false);
   const [selectedVariation, setSelectedVariation] = useState(null);
+  const [selectedAddons, setSelectedAddons] = useState([]);
+  const [removedIngredients, setRemovedIngredients] = useState([]);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', id],
@@ -23,6 +28,14 @@ export default function ProductDetail() {
       return products[0];
     },
   });
+
+  const { data: restaurants = [] } = useQuery({
+    queryKey: ['restaurant-product-detail'],
+    queryFn: () => base44.entities.Restaurant.list(),
+  });
+  const restaurant = restaurants[0];
+  const enableFavorites = !!restaurant?.enable_favorites;
+  const enableReviews = !!restaurant?.enable_reviews;
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -36,11 +49,22 @@ export default function ProductDetail() {
     ? selectedVariation.price
     : product?.price;
 
+  const addonsTotal = selectedAddons.reduce((s, a) => s + (Number(a.price) || 0), 0);
+  const unitWithAddons = (Number(activePrice) || 0) + addonsTotal;
+
   const handleAddToCart = () => {
     if (!product) return;
     const variationLabel = product.has_variations && selectedVariation ? selectedVariation.name : null;
-    const itemNotes = variationLabel ? [variationLabel, notes].filter(Boolean).join(' — ') : notes;
-    addItem({ ...product, price: activePrice }, quantity, itemNotes);
+    const parts = [variationLabel, notes].filter(Boolean);
+    if (removedIngredients.length) parts.push(`Sem: ${removedIngredients.join(', ')}`);
+    if (selectedAddons.length) parts.push(`Adicionais: ${selectedAddons.map(a => a.name).join(', ')}`);
+    const itemNotes = parts.join(' — ');
+    addItem(
+      { ...product, price: activePrice },
+      quantity,
+      itemNotes,
+      { addons: selectedAddons, removedIngredients }
+    );
     setAdded(true);
     setTimeout(() => navigate(-1), 650);
   };
@@ -95,24 +119,7 @@ export default function ProductDetail() {
           >
             <ArrowLeft style={{ width: 18, height: 18 }} />
           </button>
-          <button
-            onClick={() => setLiked(l => !l)}
-            style={{
-              width: 40, height: 40, borderRadius: 'var(--r-sm)',
-              background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)',
-              border: 'none', cursor: 'pointer', display: 'flex',
-              alignItems: 'center', justifyContent: 'center',
-              boxShadow: 'var(--shadow-sm)',
-            }}
-            aria-label="Add to favorites"
-          >
-            <Heart style={{
-              width: 18, height: 18,
-              color: liked ? '#ef4444' : 'var(--gray-500)',
-              fill: liked ? '#ef4444' : 'transparent',
-              transition: 'color 0.2s, fill 0.2s',
-            }} />
-          </button>
+          {enableFavorites && <FavoriteButton productId={product.id} />}
         </div>
       </div>
 
@@ -138,12 +145,11 @@ export default function ProductDetail() {
           </div>
 
           {/* Rating */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} style={{ width: 13, height: 13, fill: '#eab308', color: '#eab308' }} />
-            ))}
-            <span style={{ fontSize: 13, color: 'var(--gray-400)', fontWeight: 600, marginLeft: 2 }}>4.8 (128 avaliações)</span>
-          </div>
+          {enableReviews && (
+            <div style={{ marginBottom: 14 }}>
+              <ProductRatingBadge productId={product.id} size={13} />
+            </div>
+          )}
 
           {/* Description */}
           {product.description && (
@@ -196,10 +202,19 @@ export default function ProductDetail() {
               <div style={{ fontSize: 11, color: 'var(--gray-400)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>Subtotal</div>
 
               <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--gray-900)', letterSpacing: '-0.03em' }}>
-                R$ {((activePrice || 0) * quantity).toFixed(2)}
+                R$ {(unitWithAddons * quantity).toFixed(2)}
               </div>
             </div>
           </div>
+
+          {/* Customização (addons + ingredientes removíveis) */}
+          <ProductCustomizer
+            product={product}
+            selectedAddons={selectedAddons}
+            onChangeAddons={setSelectedAddons}
+            removedIngredients={removedIngredients}
+            onChangeRemoved={setRemovedIngredients}
+          />
 
           {/* Notes */}
           <div className="input-group">
@@ -216,39 +231,25 @@ export default function ProductDetail() {
             />
           </div>
 
-          {/* Future customization placeholder */}
-          <div style={{
-            marginTop: 4,
-            marginBottom: 24,
-            padding: '14px 16px',
-            borderRadius: 'var(--r-md)',
-            background: 'var(--purple-50)',
-            border: '1.5px dashed var(--purple-200)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-          }}>
-            <Sparkles style={{ width: 18, height: 18, color: 'var(--purple-400)', flexShrink: 0 }} />
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--purple-600)', marginBottom: 2 }}>
-                Opções de personalização em breve
-              </div>
-              <div style={{ fontSize: 11, color: 'var(--purple-400)' }}>
-                Adicionais e remoções sugeridas estarão disponíveis aqui
-              </div>
-            </div>
-          </div>
-
           {/* Add to Cart Button */}
           <button
             className={`btn btn-lg ${added ? 'btn-success' : 'btn-primary'}`}
             onClick={handleAddToCart}
             disabled={added}
-            style={{ borderRadius: 'var(--r-full)', fontSize: 16, fontWeight: 800 }}
+            style={{ borderRadius: 'var(--r-full)', fontSize: 16, fontWeight: 800, marginBottom: 24 }}
           >
             <ShoppingCart style={{ width: 20, height: 20 }} />
-            {added ? '✓ Adicionado!' : 'Adicionar ao Carrinho'}
+            {added ? '✓ Adicionado!' : `Adicionar · R$ ${(unitWithAddons * quantity).toFixed(2)}`}
           </button>
+
+          {/* Reviews section */}
+          {enableReviews && (
+            <>
+              <div className="divider" />
+              <h3 className="section-title" style={{ marginBottom: 14 }}>Avaliações</h3>
+              <ProductReviews productId={product.id} />
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, ShoppingCart, ImageOff, Star, Sparkles, Plus, Minus } from 'lucide-react';
+import { X, ShoppingCart, ImageOff, Star, Plus, Minus } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { useCart } from '../../context/CartContext';
 import { colors, shadows, radii, typography, zIndex, transitions } from '../../lib/tokens';
+import ProductCustomizer from '../product/ProductCustomizer';
+import FavoriteButton from '../product/FavoriteButton';
+import ProductRatingBadge from '../product/ProductRatingBadge';
 
 /* ─── Quantity control ────────────────────────────────────────────────── */
 function QuantityControl({ value, onChange }) {
@@ -57,38 +62,68 @@ function useModalState(product) {
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState('');
   const [added, setAdded] = useState(false);
-  const [liked, setLiked] = useState(false);
   const [selectedVariation, setSelectedVariation] = useState(
     product?.has_variations && product.variations?.length > 0 ? product.variations[0] : null
   );
+  const [selectedAddons, setSelectedAddons] = useState([]);
+  const [removedIngredients, setRemovedIngredients] = useState([]);
 
   const activePrice = product?.has_variations && selectedVariation
     ? selectedVariation.price
     : product?.price;
+  const addonsTotal = selectedAddons.reduce((s, a) => s + (Number(a.price) || 0), 0);
+  const unitWithAddons = (Number(activePrice) || 0) + addonsTotal;
 
   const handleAdd = (onClose) => {
     const variationLabel = product.has_variations && selectedVariation ? selectedVariation.name : null;
-    const itemNotes = variationLabel ? [variationLabel, notes].filter(Boolean).join(' — ') : notes;
-    addItem({ ...product, price: activePrice }, quantity, itemNotes);
+    const parts = [variationLabel, notes].filter(Boolean);
+    if (removedIngredients.length) parts.push(`Sem: ${removedIngredients.join(', ')}`);
+    if (selectedAddons.length) parts.push(`Adicionais: ${selectedAddons.map(a => a.name).join(', ')}`);
+    const itemNotes = parts.join(' — ');
+    addItem(
+      { ...product, price: activePrice },
+      quantity,
+      itemNotes,
+      { addons: selectedAddons, removedIngredients }
+    );
     setAdded(true);
     setTimeout(() => onClose(), 600);
   };
 
-  return { quantity, setQuantity, notes, setNotes, added, liked, setLiked, selectedVariation, setSelectedVariation, activePrice, handleAdd };
+  return {
+    quantity, setQuantity, notes, setNotes, added,
+    selectedVariation, setSelectedVariation,
+    selectedAddons, setSelectedAddons,
+    removedIngredients, setRemovedIngredients,
+    activePrice, unitWithAddons, handleAdd,
+  };
 }
 
-/* ─── Stars row ───────────────────────────────────────────────────────── */
-function Stars({ size = 12 }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-      {[...Array(5)].map((_, i) => (
-        <Star key={i} style={{ width: size, height: size, fill: '#eab308', color: '#eab308' }} />
-      ))}
-      <span style={{ fontSize: typography.sizes.sm, color: colors.gray400, fontWeight: typography.weights.semibold, marginLeft: 4 }}>
-        4.8 · 128 avaliações
-      </span>
-    </div>
-  );
+function useRestaurantFlags() {
+  const { data: restaurants = [] } = useQuery({
+    queryKey: ['restaurant-flags'],
+    queryFn: () => base44.entities.Restaurant.list(),
+    staleTime: 60000,
+  });
+  const r = restaurants[0];
+  return { enableFavorites: !!r?.enable_favorites, enableReviews: !!r?.enable_reviews };
+}
+
+/* ─── Stars row (usa nota real da entidade Review) ────────────────────── */
+function Stars({ productId, size = 12, fallback = false }) {
+  if (fallback) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        {[...Array(5)].map((_, i) => (
+          <Star key={i} style={{ width: size, height: size, fill: 'transparent', color: colors.gray300 }} />
+        ))}
+        <span style={{ fontSize: typography.sizes.sm, color: colors.gray400, fontWeight: typography.weights.semibold, marginLeft: 4 }}>
+          Sem avaliações
+        </span>
+      </div>
+    );
+  }
+  return <ProductRatingBadge productId={productId} size={size} />;
 }
 
 /* ─── Variations picker ───────────────────────────────────────────────── */
@@ -140,7 +175,14 @@ function VariationPicker({ variations, selected, onSelect, large = false }) {
 
 /* ─── MOBILE layout (bottom-sheet) ───────────────────────────────────── */
 function MobileModal({ product, onClose }) {
-  const { quantity, setQuantity, notes, setNotes, added, liked, setLiked, selectedVariation, setSelectedVariation, activePrice, handleAdd } = useModalState(product);
+  const {
+    quantity, setQuantity, notes, setNotes, added,
+    selectedVariation, setSelectedVariation,
+    selectedAddons, setSelectedAddons,
+    removedIngredients, setRemovedIngredients,
+    activePrice, unitWithAddons, handleAdd,
+  } = useModalState(product);
+  const { enableFavorites, enableReviews } = useRestaurantFlags();
 
   return (
     <motion.div
@@ -182,18 +224,11 @@ function MobileModal({ product, onClose }) {
         >
           <X style={{ width: 16, height: 16 }} />
         </button>
-        <button
-          onClick={() => setLiked(l => !l)}
-          style={{
-            position: 'absolute', top: 12, right: 56,
-            width: 36, height: 36, borderRadius: '50%', border: 'none',
-            background: 'rgba(0,0,0,0.45)', color: liked ? '#ef4444' : colors.white,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', backdropFilter: 'blur(8px)',
-          }}
-        >
-          <Heart style={{ width: 16, height: 16, fill: liked ? '#ef4444' : 'transparent', transition: 'fill 0.2s' }} />
-        </button>
+        {enableFavorites && (
+          <div style={{ position: 'absolute', top: 12, right: 56 }}>
+            <FavoriteButton productId={product.id} size={16} darkBg style={{ width: 36, height: 36, borderRadius: '50%' }} />
+          </div>
+        )}
       </div>
 
       {/* Scrollable content */}
@@ -210,9 +245,11 @@ function MobileModal({ product, onClose }) {
           </div>
         </div>
 
-        <div style={{ marginBottom: 12 }}>
-          <Stars size={12} />
-        </div>
+        {enableReviews && (
+          <div style={{ marginBottom: 12 }}>
+            <Stars productId={product.id} size={12} />
+          </div>
+        )}
 
         {product.description && (
           <p style={{ fontSize: typography.sizes.base, color: colors.gray500, lineHeight: typography.lineHeights.relaxed, marginBottom: 18 }}>
@@ -226,6 +263,15 @@ function MobileModal({ product, onClose }) {
           onSelect={setSelectedVariation}
         />
 
+        <ProductCustomizer
+          product={product}
+          selectedAddons={selectedAddons}
+          onChangeAddons={setSelectedAddons}
+          removedIngredients={removedIngredients}
+          onChangeRemoved={setRemovedIngredients}
+          compact
+        />
+
         <div className="divider" />
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
@@ -235,7 +281,7 @@ function MobileModal({ product, onClose }) {
               Subtotal
             </div>
             <div style={{ fontSize: 22, fontWeight: typography.weights.black, color: colors.gray900, letterSpacing: '-0.03em' }}>
-              R$ {((activePrice || 0) * quantity).toFixed(2)}
+              R$ {(unitWithAddons * quantity).toFixed(2)}
             </div>
           </div>
         </div>
@@ -259,7 +305,7 @@ function MobileModal({ product, onClose }) {
           style={{ borderRadius: radii.full, fontWeight: typography.weights.extrabold }}
         >
           <ShoppingCart style={{ width: 18, height: 18 }} />
-          {added ? '✓ Adicionado!' : `Adicionar · R$ ${((activePrice || 0) * quantity).toFixed(2)}`}
+          {added ? '✓ Adicionado!' : `Adicionar · R$ ${(unitWithAddons * quantity).toFixed(2)}`}
         </button>
       </div>
     </motion.div>
@@ -268,7 +314,14 @@ function MobileModal({ product, onClose }) {
 
 /* ─── DESKTOP layout (two-column, centered, sem cortes) ───────────────── */
 function DesktopModal({ product, onClose }) {
-  const { quantity, setQuantity, notes, setNotes, added, liked, setLiked, selectedVariation, setSelectedVariation, activePrice, handleAdd } = useModalState(product);
+  const {
+    quantity, setQuantity, notes, setNotes, added,
+    selectedVariation, setSelectedVariation,
+    selectedAddons, setSelectedAddons,
+    removedIngredients, setRemovedIngredients,
+    activePrice, unitWithAddons, handleAdd,
+  } = useModalState(product);
+  const { enableFavorites, enableReviews } = useRestaurantFlags();
 
   return (
     <motion.div
@@ -339,19 +392,13 @@ function DesktopModal({ product, onClose }) {
           borderBottom: `1px solid ${colors.gray100}`,
           flexShrink: 0,
         }}>
-          <Stars size={14} />
+          {enableReviews
+            ? <Stars productId={product.id} size={14} />
+            : <div />}
           <div style={{ display: 'flex', gap: 10 }}>
-            <button
-              onClick={() => setLiked(l => !l)}
-              style={{
-                width: 38, height: 38, borderRadius: '50%',
-                border: `1.5px solid ${colors.gray200}`, background: colors.white,
-                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: transitions.fast,
-              }}
-            >
-              <Heart style={{ width: 17, height: 17, color: liked ? '#ef4444' : colors.gray400, fill: liked ? '#ef4444' : 'transparent', transition: 'all 0.2s' }} />
-            </button>
+            {enableFavorites && (
+              <FavoriteButton productId={product.id} size={17} style={{ width: 38, height: 38, borderRadius: '50%', border: `1.5px solid ${colors.gray200}`, background: colors.white, boxShadow: 'none' }} />
+            )}
             <button
               onClick={onClose}
               style={{
@@ -391,6 +438,14 @@ function DesktopModal({ product, onClose }) {
             large
           />
 
+          <ProductCustomizer
+            product={product}
+            selectedAddons={selectedAddons}
+            onChangeAddons={setSelectedAddons}
+            removedIngredients={removedIngredients}
+            onChangeRemoved={setRemovedIngredients}
+          />
+
           <div className="divider" />
 
           <div className="input-group">
@@ -403,19 +458,6 @@ function DesktopModal({ product, onClose }) {
               rows={3}
               style={{ resize: 'none' }}
             />
-          </div>
-
-          <div style={{
-            marginTop: 4, padding: '12px 16px',
-            borderRadius: radii.md,
-            background: colors.purple50,
-            border: `1.5px dashed ${colors.purple200}`,
-            display: 'flex', alignItems: 'center', gap: 10,
-          }}>
-            <Sparkles style={{ width: 16, height: 16, color: colors.purple400, flexShrink: 0 }} />
-            <span style={{ fontSize: typography.sizes.sm, color: colors.purple500, fontWeight: typography.weights.semibold }}>
-              Opções de personalização em breve
-            </span>
           </div>
         </div>
 
@@ -440,7 +482,7 @@ function DesktopModal({ product, onClose }) {
               style={{ borderRadius: radii.full, fontWeight: typography.weights.extrabold, fontSize: typography.sizes.md, padding: '14px 28px', flex: 1, maxWidth: 280 }}
             >
               <ShoppingCart style={{ width: 18, height: 18 }} />
-              {added ? '✓ Adicionado!' : `Adicionar · R$ ${((activePrice || 0) * quantity).toFixed(2)}`}
+              {added ? '✓ Adicionado!' : `Adicionar · R$ ${(unitWithAddons * quantity).toFixed(2)}`}
             </button>
           </div>
         </div>

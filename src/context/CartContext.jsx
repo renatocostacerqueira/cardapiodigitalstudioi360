@@ -5,9 +5,21 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
 
-  const addItem = (product, quantity, notes) => {
+  const addItem = (product, quantity, notes, options = {}) => {
+    const addons = options.addons || [];
+    const removedIngredients = options.removedIngredients || [];
+    const addonsTotal = addons.reduce((s, a) => s + (Number(a.price) || 0), 0);
+    const unitPrice = (Number(product.price) || 0) + addonsTotal;
+
     setItems(prev => {
-      const existing = prev.find(i => i.product_id === product.id && i.notes === notes);
+      const addonKey = addons.map(a => a.name).sort().join('|');
+      const removedKey = [...removedIngredients].sort().join('|');
+      const existing = prev.find(i =>
+        i.product_id === product.id &&
+        i.notes === (notes || '') &&
+        (i.addonKey || '') === addonKey &&
+        (i.removedKey || '') === removedKey
+      );
       if (existing) {
         return prev.map(i =>
           i === existing
@@ -20,9 +32,13 @@ export function CartProvider({ children }) {
         product_name: product.name,
         product_image: product.image || '',
         quantity,
-        unit_price: product.price,
-        subtotal: quantity * product.price,
-        notes: notes || ''
+        unit_price: unitPrice,
+        subtotal: quantity * unitPrice,
+        notes: notes || '',
+        addons,
+        removed_ingredients: removedIngredients,
+        addonKey,
+        removedKey,
       }];
     });
   };

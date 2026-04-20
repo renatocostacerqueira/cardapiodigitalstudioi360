@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Pencil, Trash2, ImageOff, Star, Eye, EyeOff, Search, Loader2, PlusCircle, MinusCircle } from 'lucide-react';
 import ModalShell from '../../components/admin/ModalShell';
+import ProductAddonsEditor from '../../components/admin/ProductAddonsEditor';
 
 function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categories }) {
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -161,13 +162,27 @@ function ProductForm({ form, setForm, editing, onSave, onCancel, saving, categor
               </label>
             </div>
 
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button className="btn btn-primary btn-sm" onClick={onSave} disabled={!form.name || !form.price || saving}>
-                {saving ? 'Salvando...' : editing ? 'Atualizar Produto' : 'Criar Produto'}
-              </button>
-              <button className="btn btn-secondary btn-sm" onClick={onCancel}>Cancelar</button>
-            </div>
           </div>
+        </div>
+
+        {/* Personalização (addons + ingredientes removíveis) */}
+        <div style={{ borderTop: '1px solid var(--gray-150)', marginTop: 18, paddingTop: 18 }}>
+          <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--gray-800)', marginBottom: 14 }}>
+            Personalização do produto
+          </h3>
+          <ProductAddonsEditor
+            addons={form.addons || []}
+            onChangeAddons={(addons) => setForm(prev => ({ ...prev, addons }))}
+            removable={form.removable_ingredients || []}
+            onChangeRemovable={(removable_ingredients) => setForm(prev => ({ ...prev, removable_ingredients }))}
+          />
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, marginTop: 18 }}>
+          <button className="btn btn-primary btn-sm" onClick={onSave} disabled={!form.name || !form.price || saving}>
+            {saving ? 'Salvando...' : editing ? 'Atualizar Produto' : 'Criar Produto'}
+          </button>
+          <button className="btn btn-secondary btn-sm" onClick={onCancel}>Cancelar</button>
         </div>
       </div>
     </ModalShell>
@@ -180,7 +195,7 @@ export default function ManageProducts() {
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
-  const [form, setForm] = useState({ name: '', description: '', image: '', price: '', category_id: '', available: true, featured: false, has_variations: false, variations: [] });
+  const [form, setForm] = useState({ name: '', description: '', image: '', price: '', category_id: '', available: true, featured: false, has_variations: false, variations: [], addons: [], removable_ingredients: [] });
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['admin-products'],
@@ -197,10 +212,19 @@ export default function ManageProducts() {
       const variations = (data.variations || [])
         .filter(v => v.name)
         .map(v => ({ name: v.name, price: parseFloat(v.price) || 0 }));
+      const addons = (data.addons || [])
+        .filter(a => a.name)
+        .map(a => ({ name: a.name, price: parseFloat(a.price) || 0 }));
       const basePrice = data.has_variations && variations.length > 0
         ? variations[0].price
         : parseFloat(data.price) || 0;
-      const payload = { ...data, price: basePrice, variations: data.has_variations ? variations : [] };
+      const payload = {
+        ...data,
+        price: basePrice,
+        variations: data.has_variations ? variations : [],
+        addons,
+        removable_ingredients: data.removable_ingredients || [],
+      };
       if (editing) return base44.entities.Product.update(editing.id, payload);
       return base44.entities.Product.create(payload);
     },
@@ -218,7 +242,7 @@ export default function ManageProducts() {
   });
 
   const resetForm = () => {
-    setForm({ name: '', description: '', image: '', price: '', category_id: '', available: true, featured: false, has_variations: false, variations: [] });
+    setForm({ name: '', description: '', image: '', price: '', category_id: '', available: true, featured: false, has_variations: false, variations: [], addons: [], removable_ingredients: [] });
     setEditing(null);
     setShowForm(false);
   };
@@ -231,6 +255,8 @@ export default function ManageProducts() {
       featured: product.featured || false,
       has_variations: product.has_variations || false,
       variations: product.variations || [],
+      addons: (product.addons || []).map(a => ({ name: a.name || '', price: a.price?.toString() || '' })),
+      removable_ingredients: product.removable_ingredients || [],
     });
     setEditing(product);
     setShowForm(true);

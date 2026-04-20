@@ -1,16 +1,26 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, ShoppingCart, ClipboardList, Settings, UtensilsCrossed } from 'lucide-react';
+import { Home, ShoppingCart, ClipboardList, Settings, UtensilsCrossed, Heart } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 
 export default function DesktopSidebar() {
   const location = useLocation();
   const { totalItems } = useCart();
   const path = location.pathname;
 
+  const { data: restaurants = [] } = useQuery({
+    queryKey: ['restaurant-flags'],
+    queryFn: () => base44.entities.Restaurant.list(),
+    staleTime: 60000,
+  });
+  const enableFavorites = !!restaurants[0]?.enable_favorites;
+
   const navItems = [
     { to: '/', icon: Home, label: 'Cardápio' },
     { to: '/cart', icon: ShoppingCart, label: 'Carrinho', badge: totalItems },
+    ...(enableFavorites ? [{ to: '/favorites', icon: Heart, label: 'Favoritos' }] : []),
     { to: '/orders', icon: ClipboardList, label: 'Meus Pedidos' },
     { to: '/admin', icon: Settings, label: 'Administração' },
   ];
