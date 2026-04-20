@@ -24,6 +24,8 @@ export default function Checkout() {
   const [customerPhone, setCustomerPhone] = useState('');
   const [notes, setNotes] = useState('');
   const [deliveryNotes, setDeliveryNotes] = useState('');
+  const [noBell, setNoBell] = useState(false);
+  const [noHonk, setNoHonk] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [address, setAddress] = useState({
     street: '', number: '', complement: '',
@@ -88,6 +90,8 @@ export default function Checkout() {
       items,
       kitchen_printed: false,
       delivery_printed: false,
+      no_bell: noBell,
+      no_honk: noHonk,
     };
 
     if (orderType === 'delivery') {
@@ -194,6 +198,8 @@ export default function Checkout() {
                 address={address} setAddress={setAddress}
                 deliveryNotes={deliveryNotes} setDeliveryNotes={setDeliveryNotes}
                 deliveryFee={restaurant?.delivery_fee ?? 5.00}
+                noBell={noBell} setNoBell={setNoBell}
+                noHonk={noHonk} setNoHonk={setNoHonk}
               />
             )}
 
@@ -268,7 +274,7 @@ export default function Checkout() {
               disabled={!canSubmit || submitting}
               style={{ flex: 1, borderRadius: 'var(--r-full)', fontWeight: 800, fontSize: 16 }}
             >
-              {submitting ? 'Enviando Pedido…' : 'Fazer Pedido'}
+              {submitting ? 'Enviando Pedido…' : 'Finalizar Pedido'}
               {!submitting && <ChevronRight style={{ width: 18, height: 18 }} />}
             </motion.button>
           )}

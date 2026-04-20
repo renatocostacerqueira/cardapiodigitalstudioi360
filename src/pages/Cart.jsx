@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShoppingCart, Trash2, ImageOff, ChevronRight, Pencil } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Trash2, ImageOff, ChevronRight, Pencil, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
 import { useCart } from '../context/CartContext';
 import UpsellSuggestions from '../components/cart/UpsellSuggestions';
 import EditItemModal from '../components/cart/EditItemModal';
@@ -118,6 +120,12 @@ export default function Cart() {
   const { items, updateQuantity, updateItem, removeItem, totalPrice } = useCart();
   const [editingIndex, setEditingIndex] = useState(null);
 
+  const { data: restaurants = [] } = useQuery({
+    queryKey: ['restaurant-cart'],
+    queryFn: () => base44.entities.Restaurant.list(),
+  });
+  const isClosed = restaurants[0] && restaurants[0].active === false;
+
   useEffect(() => { window.scrollTo(0, 0); }, []);
   const cartItemIds = items.map(i => i.product_id);
 
@@ -180,16 +188,32 @@ export default function Cart() {
               </div>
             </motion.div>
 
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn btn-primary btn-lg"
-              onClick={() => navigate('/checkout')}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 'var(--r-full)', fontWeight: 800 }}
-            >
-              Finalizar Pedido
-              <ChevronRight style={{ width: 18, height: 18 }} />
-            </motion.button>
+            {isClosed ? (
+              <div style={{
+                padding: '14px 16px', borderRadius: 'var(--r-md)',
+                background: '#fee2e2', border: '1.5px solid #fca5a5',
+                display: 'flex', alignItems: 'center', gap: 12,
+              }}>
+                <Lock style={{ width: 18, height: 18, color: 'var(--red-600)', flexShrink: 0 }} />
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: '#991b1b' }}>Restaurante Fechado</div>
+                  <div style={{ fontSize: 12, color: '#b91c1c', marginTop: 2 }}>
+                    Não é possível finalizar o pedido agora. Volte quando estivermos abertos.
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+                className="btn btn-primary btn-lg"
+                onClick={() => navigate('/checkout')}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 'var(--r-full)', fontWeight: 800 }}
+              >
+                Finalizar Pedido
+                <ChevronRight style={{ width: 18, height: 18 }} />
+              </motion.button>
+            )}
           </>
         )}
       </div>

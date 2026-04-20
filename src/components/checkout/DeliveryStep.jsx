@@ -8,7 +8,6 @@ const DELIVERY_SUGGESTIONS = [
   'Bater no portão',
   'Deixar com o vizinho',
   'Ligar ao chegar',
-  'Entregar sem campainha',
 ];
 
 export default function DeliveryStep({
@@ -16,6 +15,8 @@ export default function DeliveryStep({
   address, setAddress,
   deliveryNotes, setDeliveryNotes,
   deliveryFee,
+  noBell, setNoBell,
+  noHonk, setNoHonk,
 }) {
   return (
     <>
@@ -116,6 +117,31 @@ export default function DeliveryStep({
                       </button>
                     ))}
                   </div>
+                </div>
+
+                {/* Toggles: Não tocar campainha / Não buzinar */}
+                <div style={{ marginTop: 14, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  {[
+                    { key: 'no_bell', label: '🔕 Não tocar campainha', value: !!noBell, toggle: () => setNoBell(!noBell) },
+                    { key: 'no_honk', label: '🚫 Não buzinar', value: !!noHonk, toggle: () => setNoHonk(!noHonk) },
+                  ].map(opt => (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      onClick={opt.toggle}
+                      style={{
+                        padding: '10px 12px',
+                        borderRadius: 'var(--r-md)',
+                        border: `1.5px solid ${opt.value ? 'var(--purple-500)' : 'var(--gray-200)'}`,
+                        background: opt.value ? 'var(--purple-50)' : '#fff',
+                        color: opt.value ? 'var(--purple-700)' : 'var(--gray-600)',
+                        fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                        textAlign: 'left', transition: 'all 0.15s',
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>

@@ -31,7 +31,7 @@ export default function KitchenPanel() {
   });
 
   const kitchenOrders = orders.filter(o => {
-    if (filter === 'active') return ['new', 'awaiting_confirmation', 'in_preparation'].includes(o.status);
+    if (filter === 'active') return ['new', 'in_preparation'].includes(o.status);
     if (filter === 'ready') return o.status === 'ready';
     if (filter === 'cancelled') return o.status === 'cancelled';
     return true;
@@ -137,17 +137,11 @@ export default function KitchenPanel() {
               </div>
 
               <div className="ticket-actions">
-                {['new', 'awaiting_confirmation'].includes(order.status) && (
-                  <>
-                    <button className="btn btn-warning btn-sm" style={{ flex: 1 }}
-                      onClick={() => updateStatus.mutate({ id: order.id, status: 'awaiting_confirmation' })}>
-                      ✓ Confirmar
-                    </button>
-                    <button className="btn btn-primary btn-sm" style={{ flex: 1 }}
-                      onClick={() => updateStatus.mutate({ id: order.id, status: 'in_preparation' })}>
-                      🍳 Iniciar Preparo
-                    </button>
-                  </>
+                {order.status === 'new' && (
+                  <button className="btn btn-primary btn-sm" style={{ flex: 1 }}
+                    onClick={() => updateStatus.mutate({ id: order.id, status: 'in_preparation' })}>
+                    🍳 Iniciar Preparo
+                  </button>
                 )}
                 {order.status === 'in_preparation' && (
                   <button className="btn btn-success btn-sm" style={{ flex: 1 }}

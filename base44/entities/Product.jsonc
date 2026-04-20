@@ -53,6 +53,30 @@
           }
         }
       }
+    },
+    "addons": {
+      "type": "array",
+      "description": "Optional extras the customer can add",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Addon name (e.g. Bacon extra)"
+          },
+          "price": {
+            "type": "number",
+            "description": "Price to add"
+          }
+        }
+      }
+    },
+    "removable_ingredients": {
+      "type": "array",
+      "description": "Ingredients the customer can remove",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": [

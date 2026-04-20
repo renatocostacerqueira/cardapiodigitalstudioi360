@@ -7,7 +7,9 @@ import SearchBar from '../components/menu/SearchBar';
 import CategoryPills from '../components/menu/CategoryPills';
 import FloatingCartButton from '../components/menu/FloatingCartButton';
 import ProductModal from '../components/menu/ProductModal';
-import { UtensilsCrossed, ImageOff, Star, Zap, Clock, ShieldCheck } from 'lucide-react';
+import { UtensilsCrossed, ImageOff, Star, Zap, Clock, ShieldCheck, Lock } from 'lucide-react';
+import RestaurantHeader from '../components/menu/RestaurantHeader';
+import ClosedBanner from '../components/menu/ClosedBanner';
 
 function ProductCard({ product, onClick }) {
   return (
@@ -119,6 +121,13 @@ export default function MenuHome() {
     queryFn: () => base44.entities.Product.filter({ available: true }),
   });
 
+  const { data: restaurants = [] } = useQuery({
+    queryKey: ['restaurant-menu-home'],
+    queryFn: () => base44.entities.Restaurant.list(),
+  });
+  const restaurant = restaurants[0];
+  const isClosed = restaurant && restaurant.active === false;
+
   const filtered = products.filter(p => {
     const matchesSearch = !search || p.name?.toLowerCase().includes(search.toLowerCase());
     const matchesCat = !activeCategory || p.category_id === activeCategory;
@@ -140,24 +149,8 @@ export default function MenuHome() {
       <div className="mobile-menu-view">
         <div className="app-shell">
           <div className="page-container" style={{ paddingBottom: 140 }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, paddingTop: 12 }}>
-              <div>
-                <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--purple-400)', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 6 }}>
-                  Boa comida, entrega rápida
-                </p>
-                <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--gray-900)', letterSpacing: '-0.04em', lineHeight: 1.15 }}>
-                  O que você quer<br />comer hoje? 🍽️
-                </h1>
-              </div>
-              <div style={{
-                width: 46, height: 46, borderRadius: 'var(--r-full)',
-                background: 'linear-gradient(135deg, var(--purple-500), var(--purple-700))',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0, marginTop: 4, boxShadow: '0 4px 14px rgba(109,40,217,0.30)',
-              }}>
-                <UtensilsCrossed style={{ width: 22, height: 22, color: '#fff' }} />
-              </div>
-            </div>
+            <RestaurantHeader restaurant={restaurant} variant="mobile" />
+            {isClosed && <ClosedBanner />}
             <SearchBar value={search} onChange={setSearch} placeholder="Buscar pratos..." />
             <CategoryPills categories={categories} activeId={activeCategory} onSelect={setActiveCategory} />
             {isLoading ? (
@@ -196,7 +189,10 @@ export default function MenuHome() {
       {/* ===== DESKTOP (≥1024px) ===== */}
       <div className="desktop-menu-view">
         <div style={{ minHeight: '100vh', background: 'var(--gray-50)', padding: '40px 48px 80px', maxWidth: 1280, margin: '0 auto' }}>
-          <HeroBanner />
+          {restaurant?.name
+            ? <RestaurantHeader restaurant={restaurant} variant="desktop" />
+            : <HeroBanner />}
+          {isClosed && <ClosedBanner />}
 
           {/* Search + Categories row */}
           <div style={{ marginBottom: 32 }}>
@@ -243,7 +239,7 @@ export default function MenuHome() {
         <ProductModal product={modalProduct} onClose={() => setModalProduct(null)} />
       )}
 
-      <FloatingCartButton />
+      {!isClosed && <FloatingCartButton />}
 
       <style>{`
         .mobile-menu-view { display: block; }

@@ -34,6 +34,21 @@
       "type": "boolean",
       "default": true,
       "description": "Whether restaurant is currently active"
+    },
+    "cancellation_window_minutes": {
+      "type": "number",
+      "default": 5,
+      "description": "Minutes customer has to cancel before prep starts"
+    },
+    "enable_favorites": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable favorites feature for customers"
+    },
+    "enable_reviews": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable reviews feature for customers"
     }
   },
   "required": [

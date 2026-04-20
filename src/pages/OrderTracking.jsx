@@ -219,9 +219,6 @@ export default function OrderTracking() {
             orderNumber={order.order_number}
             customerName={order.customer_name}
           />
-          <button className="btn btn-outline btn-lg" onClick={() => navigate('/')} style={{ borderRadius: 'var(--r-full)' }}>
-            Voltar ao Cardápio
-          </button>
         </div>
       </div>
       <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }`}</style>

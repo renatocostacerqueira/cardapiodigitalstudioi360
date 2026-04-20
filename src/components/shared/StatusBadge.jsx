@@ -2,7 +2,6 @@ import React from 'react';
 
 const STATUS_MAP = {
   new: { label: 'Novo Pedido', className: 'status-new' },
-  awaiting_confirmation: { label: 'Aguardando Confirmação', className: 'status-awaiting' },
   in_preparation: { label: 'Em Preparo', className: 'status-preparing' },
   ready: { label: 'Pronto', className: 'status-ready' },
   out_for_delivery: { label: 'Saiu para Entrega', className: 'status-delivering' },

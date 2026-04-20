@@ -49,7 +49,6 @@
       "type": "string",
       "enum": [
         "new",
-        "awaiting_confirmation",
         "in_preparation",
         "ready",
         "out_for_delivery",
@@ -63,6 +62,16 @@
     "notes": {
       "type": "string",
       "description": "General order notes"
+    },
+    "no_bell": {
+      "type": "boolean",
+      "default": false,
+      "description": "Do not ring the bell"
+    },
+    "no_honk": {
+      "type": "boolean",
+      "default": false,
+      "description": "Do not honk"
     },
     "address_street": {
       "type": "string"
@@ -108,6 +117,26 @@
           },
           "notes": {
             "type": "string"
+          },
+          "addons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "removed_ingredients": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }

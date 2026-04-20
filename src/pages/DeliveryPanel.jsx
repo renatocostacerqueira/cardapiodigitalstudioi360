@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import StatusBadge from '../components/shared/StatusBadge';
 import DeliveryMap from '../components/delivery/DeliveryMap';
 import DriverLocationUpdater from '../components/delivery/DriverLocationUpdater';
+import WazeRouteButton from '../components/delivery/WazeRouteButton';
 import moment from 'moment';
 
 const PAYMENT_LABELS = {
@@ -66,9 +67,14 @@ export default function DeliveryPanel() {
             </p>
           </div>
         </div>
-        <button onClick={() => refetch()} style={{ background: '#fff', border: '1.5px solid var(--gray-150)', borderRadius: 'var(--r-sm)', padding: '8px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--gray-600)', fontWeight: 600 }}>
-          <RefreshCw style={{ width: 14, height: 14 }} /> Atualizar
-        </button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          {['ready', 'delivering'].includes(filter) && filtered.length > 1 && (
+            <WazeRouteButton orders={filtered} variant="compact" />
+          )}
+          <button onClick={() => refetch()} style={{ background: '#fff', border: '1.5px solid var(--gray-150)', borderRadius: 'var(--r-sm)', padding: '8px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--gray-600)', fontWeight: 600 }}>
+            <RefreshCw style={{ width: 14, height: 14 }} /> Atualizar
+          </button>
+        </div>
       </div>
 
       <div className="tab-bar" style={{ marginBottom: 20 }}>
@@ -159,7 +165,7 @@ export default function DeliveryPanel() {
                         </div>
                       </div>
                     </div>
-                    <div style={{ paddingLeft: 28, marginTop: 8, display: 'flex', gap: 8 }}>
+                    <div style={{ paddingLeft: 28, marginTop: 8, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                       <button
                         onClick={() => setMapOrder(order)}
                         style={{
@@ -173,6 +179,7 @@ export default function DeliveryPanel() {
                         <Map style={{ width: 13, height: 13 }} />
                         Ver no Mapa
                       </button>
+                      <WazeRouteButton orders={[order]} variant="compact" />
                     </div>
                   </div>
                 ) : (
@@ -213,6 +220,21 @@ export default function DeliveryPanel() {
                       <div className="info-label">Observações</div>
                       <div className="info-value" style={{ fontStyle: 'italic', color: 'var(--gray-600)' }}>{order.notes}</div>
                     </div>
+                  </div>
+                )}
+
+                {(order.no_bell || order.no_honk) && (
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8, paddingLeft: 28 }}>
+                    {order.no_bell && (
+                      <span style={{ fontSize: 12, fontWeight: 700, padding: '5px 10px', borderRadius: 'var(--r-full)', background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' }}>
+                        🔕 Não tocar campainha
+                      </span>
+                    )}
+                    {order.no_honk && (
+                      <span style={{ fontSize: 12, fontWeight: 700, padding: '5px 10px', borderRadius: 'var(--r-full)', background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' }}>
+                        🚫 Não buzinar
+                      </span>
+                    )}
                   </div>
                 )}
               </div>

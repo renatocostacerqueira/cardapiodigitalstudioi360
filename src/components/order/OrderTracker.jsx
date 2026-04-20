@@ -3,7 +3,6 @@ import { CheckCircle2, Circle, Clock, ChefHat, PackageCheck, Truck, Home, Store 
 
 const DELIVERY_STEPS = [
   { key: 'new', label: 'Pedido Recebido', icon: Clock, emoji: '📋' },
-  { key: 'awaiting_confirmation', label: 'Confirmando', icon: Clock, emoji: '⏳' },
   { key: 'in_preparation', label: 'Na Cozinha', icon: ChefHat, emoji: '🍳' },
   { key: 'ready', label: 'Pronto', icon: PackageCheck, emoji: '📦' },
   { key: 'out_for_delivery', label: 'Saiu para Entrega', icon: Truck, emoji: '🛵' },
@@ -12,7 +11,6 @@ const DELIVERY_STEPS = [
 
 const PICKUP_STEPS = [
   { key: 'new', label: 'Pedido Recebido', icon: Clock, emoji: '📋' },
-  { key: 'awaiting_confirmation', label: 'Confirmando', icon: Clock, emoji: '⏳' },
   { key: 'in_preparation', label: 'Na Cozinha', icon: ChefHat, emoji: '🍳' },
   { key: 'ready', label: 'Pronto para Retirada', icon: PackageCheck, emoji: '🏪' },
   { key: 'picked_up', label: 'Retirado', icon: Store, emoji: '✅' },
@@ -20,21 +18,19 @@ const PICKUP_STEPS = [
 
 const STATUS_INDEX = {
   new: 0,
-  awaiting_confirmation: 1,
-  in_preparation: 2,
-  ready: 3,
-  out_for_delivery: 4,
-  delivered: 5,
-  picked_up: 4,
+  in_preparation: 1,
+  ready: 2,
+  out_for_delivery: 3,
+  delivered: 4,
+  picked_up: 3,
   cancelled: -1,
 };
 
 const PICKUP_STATUS_INDEX = {
   new: 0,
-  awaiting_confirmation: 1,
-  in_preparation: 2,
-  ready: 3,
-  picked_up: 4,
+  in_preparation: 1,
+  ready: 2,
+  picked_up: 3,
   cancelled: -1,
 };
 

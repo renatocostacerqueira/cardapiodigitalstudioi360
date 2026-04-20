@@ -242,17 +242,33 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
             </div>
           )}
 
-          {/* Status Update */}
+          {/* Status — Admin só altera/cancela quando é "Novo Pedido" */}
           <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: 18 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 10 }}>Atualizar Status</div>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-              <select className="input-field" value={newStatus} onChange={e => setNewStatus(e.target.value)} style={{ flex: 1 }}>
-                {STATUSES.filter(s => s.value).map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-              </select>
-              <button className="btn btn-primary btn-sm" disabled={newStatus === order.status} onClick={() => { onUpdateStatus(order.id, newStatus); onClose(); }}>
-                Atualizar
-              </button>
-            </div>
+            {order.status === 'new' ? (
+              <>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 10 }}>Ações Disponíveis</div>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    style={{ flex: 1 }}
+                    onClick={() => { onUpdateStatus(order.id, 'cancelled'); onClose(); }}
+                  >
+                    Cancelar Pedido
+                  </button>
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--gray-400)', marginBottom: 12, fontStyle: 'italic' }}>
+                  Após o pedido entrar em preparo, a alteração de status passa a ser feita pelos painéis Cozinha/Entregas.
+                </div>
+              </>
+            ) : (
+              <div style={{
+                padding: 12, borderRadius: 'var(--r-sm)',
+                background: 'var(--gray-50)', border: '1px solid var(--gray-150)',
+                fontSize: 12, color: 'var(--gray-500)', marginBottom: 12, lineHeight: 1.5,
+              }}>
+                🔒 Somente visualização. O status é gerenciado pelos painéis Cozinha e Entregas.
+              </div>
+            )}
             <SendWhatsAppButton
               orderId={order.id}
               orderNumber={order.order_number}

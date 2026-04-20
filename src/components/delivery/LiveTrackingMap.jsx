@@ -126,17 +126,31 @@ export default function LiveTrackingMap({ order }) {
 
     async function init() {
       try {
-        // Get API key
-        const keyRes = await base44.functions.invoke('getMapsKey', {});
-        const apiKey = keyRes.data?.apiKey;
+        // Get API key (unwraps errors from non-2xx responses)
+        let apiKey;
+        try {
+          const keyRes = await base44.functions.invoke('getMapsKey', {});
+          apiKey = keyRes?.data?.apiKey;
+        } catch (e) {
+          const backendMsg = e?.response?.data?.error || e?.message;
+          throw new Error(`Não foi possível obter a chave de mapas: ${backendMsg}`);
+        }
         if (!apiKey) throw new Error('Chave de API não disponível');
 
         // Geocode customer address if not cached
         let custCoords = customerCoords;
         if (!custCoords) {
           const address = buildAddress(order);
-          const geoRes = await base44.functions.invoke('geocodeAddress', { address });
-          if (geoRes.data?.error) throw new Error(geoRes.data.error);
+          if (!address) throw new Error('Endereço do cliente indisponível');
+          let geoRes;
+          try {
+            geoRes = await base44.functions.invoke('geocodeAddress', { address });
+          } catch (e) {
+            const backendMsg = e?.response?.data?.error || e?.message;
+            throw new Error(`Não foi possível localizar o endereço: ${backendMsg}`);
+          }
+          if (geoRes?.data?.error) throw new Error(geoRes.data.error);
+          if (!geoRes?.data?.lat || !geoRes?.data?.lng) throw new Error('Endereço não encontrado');
           custCoords = { lat: geoRes.data.lat, lng: geoRes.data.lng };
           if (!cancelled) setCustomerCoords(custCoords);
           // Cache geocode on order so we don't redo it

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { CheckCircle, Home, Navigation, MessageSquare } from 'lucide-react';
+import { CheckCircle, Home, Navigation, MessageSquare, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
 import StatusBadge from '../components/shared/StatusBadge';
 import SendWhatsAppButton from '../components/shared/SendWhatsAppButton';
 
@@ -11,6 +12,12 @@ export default function OrderConfirmation() {
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const { data: restaurants = [] } = useQuery({
+    queryKey: ['restaurant-confirmation'],
+    queryFn: () => base44.entities.Restaurant.list(),
+  });
+  const cancellationWindow = restaurants[0]?.cancellation_window_minutes ?? 5;
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -98,6 +105,33 @@ export default function OrderConfirmation() {
             <StatusBadge status={order.status} />
           </div>
         </motion.div>
+
+        {/* Cancellation window warning — only when still "new" */}
+        {order.status === 'new' && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            style={{
+              marginTop: 24,
+              padding: '12px 16px',
+              borderRadius: 'var(--r-md)',
+              background: '#fff7ed',
+              border: '1px solid #fed7aa',
+              display: 'flex', gap: 10, alignItems: 'flex-start',
+            }}
+          >
+            <AlertCircle style={{ width: 18, height: 18, color: 'var(--orange-500)', flexShrink: 0, marginTop: 1 }} />
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#c2410c', marginBottom: 2 }}>
+                Prazo para cancelamento
+              </div>
+              <div style={{ fontSize: 12, color: '#9a3412', lineHeight: 1.5 }}>
+                Você tem até <strong>{cancellationWindow} minutos</strong> para solicitar o cancelamento via WhatsApp antes do pedido entrar em preparo.
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         <div className="divider" style={{ margin: '24px 0' }} />
 

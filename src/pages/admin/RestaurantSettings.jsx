@@ -2,16 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { Save, ImageOff, Store, MapPin, Clock, DollarSign, Loader2 } from 'lucide-react';
+import { Save, ImageOff, Store, MapPin, Clock, DollarSign, Loader2, Heart, Star, ShieldCheck } from 'lucide-react';
 
 const DEFAULT_FORM = {
   name: '', description: '', phone: '', address: '',
   delivery_fee: '', avg_prep_time: '', active: true, logo: '',
+  cancellation_window_minutes: '5',
+  enable_favorites: false,
+  enable_reviews: false,
 };
 
 const TABS = [
   { id: 'basic', label: 'Informações Básicas', icon: Store },
   { id: 'delivery', label: 'Entrega e Tempo', icon: DollarSign },
+  { id: 'modules', label: 'Funcionalidades', icon: ShieldCheck },
 ];
 
 export default function RestaurantSettings() {
@@ -40,6 +44,9 @@ export default function RestaurantSettings() {
         avg_prep_time: r.avg_prep_time?.toString() || '',
         active: r.active !== false,
         logo: r.logo || '',
+        cancellation_window_minutes: (r.cancellation_window_minutes ?? 5).toString(),
+        enable_favorites: !!r.enable_favorites,
+        enable_reviews: !!r.enable_reviews,
       });
     }
   }, [restaurants]);
@@ -50,6 +57,7 @@ export default function RestaurantSettings() {
         ...data,
         delivery_fee: parseFloat(data.delivery_fee) || 0,
         avg_prep_time: parseInt(data.avg_prep_time) || 30,
+        cancellation_window_minutes: parseInt(data.cancellation_window_minutes) || 5,
       };
       if (restaurantId) {
         return base44.entities.Restaurant.update(restaurantId, payload);
@@ -221,10 +229,70 @@ export default function RestaurantSettings() {
                 <label className="input-label">Tempo Médio de Preparo (minutos)</label>
                 <input className="input-field" type="number" min="1" value={form.avg_prep_time} onChange={f('avg_prep_time')} placeholder="30" />
               </div>
+              <div className="input-group">
+                <label className="input-label">Prazo de Cancelamento (minutos)</label>
+                <input className="input-field" type="number" min="0" value={form.cancellation_window_minutes} onChange={f('cancellation_window_minutes')} placeholder="5" />
+                <div style={{ fontSize: 12, color: 'var(--gray-400)', marginTop: 4 }}>
+                  Tempo que o cliente tem para cancelar antes do pedido entrar em preparo.
+                </div>
+              </div>
               <div style={{ padding: '12px 16px', borderRadius: 'var(--r-md)', background: 'var(--gray-50)', border: '1px solid var(--gray-150)', fontSize: 13, color: 'var(--gray-500)', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Clock style={{ width: 15, height: 15, flexShrink: 0 }} />
                 Exibido aos clientes como tempo estimado de espera
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: Funcionalidades (módulos) */}
+      {activeTab === 'modules' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 20 }}>
+          <div className="card">
+            <div className="card-body">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                <ShieldCheck style={{ width: 18, height: 18, color: 'var(--purple-600)' }} />
+                <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--gray-800)' }}>Módulos Opcionais</h2>
+              </div>
+              <p style={{ fontSize: 12, color: 'var(--gray-400)', marginBottom: 18 }}>
+                Ative apenas os recursos que fazem sentido para o seu plano.
+              </p>
+
+              {[
+                { key: 'enable_favorites', icon: Heart, title: 'Favoritos', desc: 'Clientes podem marcar produtos como favoritos e manter uma lista de preferidos.' },
+                { key: 'enable_reviews', icon: Star, title: 'Avaliações', desc: 'Clientes podem avaliar produtos e ver avaliações de outros clientes.' },
+              ].map(({ key, icon: Icon, title, desc }) => (
+                <div key={key} style={{
+                  display: 'flex', alignItems: 'center', gap: 14,
+                  padding: '14px 0', borderTop: '1px solid var(--gray-100)',
+                }}>
+                  <div style={{
+                    width: 38, height: 38, borderRadius: 'var(--r-sm)',
+                    background: form[key] ? 'var(--purple-100)' : 'var(--gray-100)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}>
+                    <Icon style={{ width: 18, height: 18, color: form[key] ? 'var(--purple-600)' : 'var(--gray-400)' }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--gray-800)' }}>{title}</div>
+                    <div style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 2, lineHeight: 1.4 }}>{desc}</div>
+                  </div>
+                  <div
+                    onClick={() => setForm(prev => ({ ...prev, [key]: !prev[key] }))}
+                    style={{
+                      width: 44, height: 24, borderRadius: 'var(--r-full)',
+                      background: form[key] ? 'var(--purple-600)' : 'var(--gray-300)',
+                      position: 'relative', cursor: 'pointer', transition: 'background 0.2s', flexShrink: 0,
+                    }}
+                  >
+                    <div style={{
+                      position: 'absolute', top: 2, left: form[key] ? 22 : 2,
+                      width: 20, height: 20, borderRadius: '50%', background: '#fff',
+                      transition: 'left 0.2s', boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
+                    }} />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
