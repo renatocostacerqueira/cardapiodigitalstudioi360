@@ -16,7 +16,7 @@ import OrderConfirmation from './pages/OrderConfirmation';
 import MyOrders from './pages/MyOrders';
 import KitchenPanel from './pages/KitchenPanel';
 import DeliveryPanel from './pages/DeliveryPanel';
-import AdminPanel, { AdminOrdersView } from './pages/AdminPanel';
+import AdminPanel from './pages/AdminPanel';
 import ManageProducts from './pages/admin/ManageProducts';
 import ManageCategories from './pages/admin/ManageCategories';
 import RestaurantSettings from './pages/admin/RestaurantSettings';
@@ -66,7 +66,6 @@ const AuthenticatedApp = () => {
 
         {/* Admin — nested routes, sidebar always visible on desktop */}
         <Route path="/admin" element={<RoleGuard allowedRoles={['admin']}><AdminPanel /></RoleGuard>}>
-          <Route path="orders" element={<AdminOrdersView />} />
           <Route path="products" element={<ManageProducts />} />
           <Route path="categories" element={<ManageCategories />} />
           <Route path="settings" element={<RestaurantSettings />} />

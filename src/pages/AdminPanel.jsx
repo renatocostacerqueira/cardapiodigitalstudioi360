@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import {
   ChefHat, Truck, Settings, ShoppingBag, Tag, Package,
-  ClipboardList, TrendingUp, CheckCircle2, AlertCircle,
+  CheckCircle2, AlertCircle,
   UtensilsCrossed, Search, Store, CreditCard, MapPin,
   Phone, User, MessageSquare, ChevronDown, X, Users
 } from 'lucide-react';
@@ -32,17 +32,21 @@ const STATUSES = [
 
 const NAV_GROUPS = [
   {
-    section: 'Operações',
-    items: [
-      { to: '/kitchen', label: 'Cozinha', icon: ChefHat, color: 'var(--orange-500)', bg: 'var(--orange-50)', external: true, badgeKey: 'kitchen' },
-      { to: '/delivery', label: 'Entregas', icon: Truck, color: 'var(--purple-600)', bg: 'var(--purple-50)', external: true },
-    ],
-  },
-  {
     section: 'Dashboard',
     items: [
       { to: '/admin', label: 'Visão Geral', icon: AlertCircle, color: 'var(--blue-500)', bg: 'var(--blue-50)', exact: true },
-      { to: '/admin/orders', label: 'Todos os Pedidos', icon: ClipboardList, color: 'var(--gray-600)', bg: 'var(--gray-100)' },
+    ],
+  },
+  {
+    section: 'Cozinha',
+    items: [
+      { to: '/kitchen', label: 'Painel da Cozinha', icon: ChefHat, color: 'var(--orange-500)', bg: 'var(--orange-50)', external: true, badgeKey: 'kitchen' },
+    ],
+  },
+  {
+    section: 'Operações',
+    items: [
+      { to: '/delivery', label: 'Entregas', icon: Truck, color: 'var(--purple-600)', bg: 'var(--purple-50)', external: true },
     ],
   },
   {
@@ -405,9 +409,7 @@ function DashboardHome({ orders, isLoading }) {
   const ready = orders.filter(o => o.status === 'ready').length;
   const delivering = orders.filter(o => o.status === 'out_for_delivery').length;
   const completed = orders.filter(o => ['delivered', 'picked_up'].includes(o.status)).length;
-  const todayRevenue = orders
-    .filter(o => moment(o.created_date).isSame(moment(), 'day') && ['delivered', 'picked_up'].includes(o.status))
-    .reduce((sum, o) => sum + (o.total_price || 0), 0);
+  const cancelled = orders.filter(o => o.status === 'cancelled').length;
 
   return (
     <div style={{ padding: '32px 36px' }}>
@@ -421,33 +423,13 @@ function DashboardHome({ orders, isLoading }) {
         <StatCard label="Em Preparo" value={preparing} color="var(--orange-500)" bg="var(--orange-50)" icon={ChefHat} />
         <StatCard label="Pronto / Entrega" value={ready + delivering} color="var(--purple-600)" bg="var(--purple-50)" icon={Truck} />
         <StatCard label="Concluídos Hoje" value={completed} color="var(--green-600)" bg="var(--green-50)" icon={CheckCircle2} />
-        <StatCard label="Faturamento Hoje" value={`R$ ${todayRevenue.toFixed(0)}`} color="var(--purple-700)" bg="var(--purple-50)" icon={TrendingUp} />
+        <StatCard label="Cancelados" value={cancelled} color="var(--red-500)" bg="var(--red-50)" icon={X} />
       </div>
 
       <div style={{ marginBottom: 16 }}>
         <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--gray-800)', letterSpacing: '-0.02em' }}>Todos os Pedidos</h2>
       </div>
 
-      <OrdersList orders={orders} isLoading={isLoading} />
-    </div>
-  );
-}
-
-// ─── Admin Orders Route View ──────────────────────────────────────────────────
-
-export function AdminOrdersView() {
-  const { data: orders = [], isLoading } = useQuery({
-    queryKey: ['admin-all-orders'],
-    queryFn: () => base44.entities.Order.list('-created_date', 200),
-    refetchInterval: 30000,
-  });
-
-  return (
-    <div style={{ padding: '32px 36px' }}>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 900, color: 'var(--gray-900)', letterSpacing: '-0.04em', marginBottom: 4 }}>Todos os Pedidos</h1>
-        <p style={{ fontSize: 13, color: 'var(--gray-400)' }}>{orders.length} pedidos no total</p>
-      </div>
       <OrdersList orders={orders} isLoading={isLoading} />
     </div>
   );
