@@ -151,8 +151,8 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }} onClick={onClose}>
-      <div style={{ background: '#fff', borderRadius: 'var(--r-xl)', width: '100%', maxWidth: 560, maxHeight: '90vh', overflowY: 'auto', boxShadow: 'var(--shadow-xl)' }} onClick={e => e.stopPropagation()}>
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--gray-100)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, background: '#fff', zIndex: 1 }}>
+      <div style={{ background: '#fff', borderRadius: 'var(--r-xl)', width: '100%', maxWidth: 620, maxHeight: '96vh', overflowY: 'auto', boxShadow: 'var(--shadow-xl)', display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
+        <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--gray-100)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, background: '#fff', zIndex: 1 }}>
           <div>
             <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.02em' }}>{order.order_number}</div>
             <div style={{ fontSize: 12, color: 'var(--gray-400)', marginTop: 2 }}>{moment(order.created_date).format('DD/MM/YYYY HH:mm')}</div>
@@ -165,108 +165,104 @@ function OrderDetailModal({ order, onClose, onUpdateStatus }) {
           </div>
         </div>
 
-        <div style={{ padding: '20px 24px' }}>
-          {/* Customer */}
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 8 }}>Cliente</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-              <User style={{ width: 15, height: 15, color: 'var(--gray-300)' }} />
-              <span style={{ fontWeight: 600, color: 'var(--gray-800)' }}>{order.customer_name}</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Phone style={{ width: 15, height: 15, color: 'var(--gray-300)' }} />
-              <a href={`tel:${order.customer_phone}`} style={{ color: 'var(--purple-600)', fontWeight: 600, textDecoration: 'none' }}>{order.customer_phone}</a>
-            </div>
-          </div>
-
-          {/* Type & Address */}
-          <div style={{ marginBottom: 16, padding: 14, borderRadius: 'var(--r-md)', background: order.order_type === 'delivery' ? 'var(--purple-50)' : 'var(--green-50)', border: `1px solid ${order.order_type === 'delivery' ? '#ddd6fe' : '#bbf7d0'}` }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: order.order_type === 'delivery' ? 10 : 0 }}>
-              {order.order_type === 'delivery' ? <Truck style={{ width: 16, height: 16, color: 'var(--purple-600)' }} /> : <Store style={{ width: 16, height: 16, color: 'var(--green-600)' }} />}
-              <span style={{ fontWeight: 700, fontSize: 14, color: order.order_type === 'delivery' ? 'var(--purple-700)' : 'var(--green-700)' }}>
-                {order.order_type === 'delivery' ? 'Entrega' : 'Retirada'}
-              </span>
-            </div>
-            {order.order_type === 'delivery' && order.address_street && (
-              <div style={{ fontSize: 13, color: 'var(--gray-700)', lineHeight: 1.6 }}>
-                <MapPin style={{ width: 13, height: 13, color: 'var(--gray-400)', display: 'inline', marginRight: 4 }} />
-                {order.address_street}, {order.address_number}
-                {order.address_complement && ` — ${order.address_complement}`}<br />
-                {order.address_neighborhood}, {order.address_city}
-                {order.address_reference && <div style={{ marginTop: 4, color: 'var(--gray-500)', fontStyle: 'italic' }}>📍 {order.address_reference}</div>}
-              </div>
-            )}
-          </div>
-
-          {/* Items */}
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 8 }}>Itens</div>
-            {order.items?.map((item, i) => (
-              <div key={i} style={{ paddingBottom: 10, marginBottom: 10, borderBottom: i < order.items.length - 1 ? '1px solid var(--gray-100)' : 'none' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontWeight: 600, color: 'var(--gray-800)' }}>{item.quantity}× {item.product_name}</span>
-                  <span style={{ fontWeight: 700, color: 'var(--gray-700)' }}>R$ {item.subtotal?.toFixed(2)}</span>
+        <div style={{ padding: '14px 20px', overflowY: 'auto', flex: 1 }}>
+          {/* Two-column layout: left = customer+address+payment, right = items */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+            {/* Left column */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {/* Customer */}
+              <div style={{ padding: 12, borderRadius: 'var(--r-md)', background: 'var(--gray-50)', border: '1px solid var(--gray-150)' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 6 }}>Cliente</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <User style={{ width: 13, height: 13, color: 'var(--gray-300)', flexShrink: 0 }} />
+                  <span style={{ fontWeight: 600, color: 'var(--gray-800)', fontSize: 13 }}>{order.customer_name}</span>
                 </div>
-                {item.notes && (
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 5, marginTop: 5 }}>
-                    <MessageSquare style={{ width: 12, height: 12, color: 'var(--purple-400)', flexShrink: 0, marginTop: 2 }} />
-                    <span style={{ fontSize: 12, color: 'var(--gray-500)', fontStyle: 'italic' }}>{item.notes}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Phone style={{ width: 13, height: 13, color: 'var(--gray-300)', flexShrink: 0 }} />
+                  <a href={`tel:${order.customer_phone}`} style={{ color: 'var(--purple-600)', fontWeight: 600, textDecoration: 'none', fontSize: 13 }}>{order.customer_phone}</a>
+                </div>
+              </div>
+
+              {/* Type & Address */}
+              <div style={{ padding: 12, borderRadius: 'var(--r-md)', background: order.order_type === 'delivery' ? 'var(--purple-50)' : 'var(--green-50)', border: `1px solid ${order.order_type === 'delivery' ? '#ddd6fe' : '#bbf7d0'}` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: order.order_type === 'delivery' ? 6 : 0 }}>
+                  {order.order_type === 'delivery' ? <Truck style={{ width: 14, height: 14, color: 'var(--purple-600)' }} /> : <Store style={{ width: 14, height: 14, color: 'var(--green-600)' }} />}
+                  <span style={{ fontWeight: 700, fontSize: 13, color: order.order_type === 'delivery' ? 'var(--purple-700)' : 'var(--green-700)' }}>
+                    {order.order_type === 'delivery' ? 'Entrega' : 'Retirada'}
+                  </span>
+                </div>
+                {order.order_type === 'delivery' && order.address_street && (
+                  <div style={{ fontSize: 12, color: 'var(--gray-700)', lineHeight: 1.5 }}>
+                    {order.address_street}, {order.address_number}
+                    {order.address_complement && ` — ${order.address_complement}`}<br />
+                    {order.address_neighborhood}, {order.address_city}
+                    {order.address_reference && <div style={{ marginTop: 3, color: 'var(--gray-500)', fontStyle: 'italic', fontSize: 11 }}>📍 {order.address_reference}</div>}
                   </div>
                 )}
               </div>
-            ))}
-            <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 8, borderTop: '2px solid var(--gray-100)' }}>
-              <span style={{ fontWeight: 800, color: 'var(--gray-900)' }}>Total</span>
-              <span style={{ fontWeight: 900, color: 'var(--purple-600)', fontSize: 17 }}>R$ {order.total_price?.toFixed(2)}</span>
-            </div>
-          </div>
 
-          {/* Payment */}
-          <div style={{ marginBottom: 16, padding: 14, borderRadius: 'var(--r-md)', background: 'var(--gray-50)', border: '1px solid var(--gray-150)' }}>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 8 }}>Pagamento</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <CreditCard style={{ width: 15, height: 15, color: 'var(--gray-400)' }} />
-              <span style={{ fontWeight: 700, color: 'var(--gray-800)' }}>{PAYMENT_LABELS[order.payment_method] || order.payment_method}</span>
-            </div>
-            {order.payment_method === 'cash_change' && order.change_amount > 0 && (
-              <div style={{ marginTop: 8, fontSize: 13, fontWeight: 700, color: '#c2410c' }}>
-                ⚠ Cliente vai pagar com R$ {order.change_amount?.toFixed(2)} — Troco a devolver: R$ {(order.change_amount - order.total_price)?.toFixed(2)}
+              {/* Payment */}
+              <div style={{ padding: 12, borderRadius: 'var(--r-md)', background: 'var(--gray-50)', border: '1px solid var(--gray-150)' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 6 }}>Pagamento</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <CreditCard style={{ width: 13, height: 13, color: 'var(--gray-400)' }} />
+                  <span style={{ fontWeight: 700, color: 'var(--gray-800)', fontSize: 13 }}>{PAYMENT_LABELS[order.payment_method] || order.payment_method}</span>
+                </div>
+                {order.payment_method === 'cash_change' && order.change_amount > 0 && (
+                  <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: '#c2410c' }}>
+                    ⚠ Paga com R$ {order.change_amount?.toFixed(2)} — Troco: R$ {(order.change_amount - order.total_price)?.toFixed(2)}
+                  </div>
+                )}
               </div>
-            )}
+
+              {order.notes && (
+                <div style={{ padding: 12, borderRadius: 'var(--r-md)', background: '#fefce8', border: '1px solid #fef08a' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#a16207', marginBottom: 4 }}>Observações</div>
+                  <div style={{ fontSize: 12, color: '#854d0e', fontStyle: 'italic' }}>{order.notes}</div>
+                </div>
+              )}
+            </div>
+
+            {/* Right column — Items */}
+            <div style={{ padding: 12, borderRadius: 'var(--r-md)', background: 'var(--gray-50)', border: '1px solid var(--gray-150)' }}>
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 8 }}>Itens</div>
+              {order.items?.map((item, i) => (
+                <div key={i} style={{ paddingBottom: 8, marginBottom: 8, borderBottom: i < order.items.length - 1 ? '1px solid var(--gray-150)' : 'none' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+                    <span style={{ fontWeight: 600, color: 'var(--gray-800)', fontSize: 13 }}>{item.quantity}× {item.product_name}</span>
+                    <span style={{ fontWeight: 700, color: 'var(--gray-700)', fontSize: 13, flexShrink: 0 }}>R$ {item.subtotal?.toFixed(2)}</span>
+                  </div>
+                  {item.notes && (
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 4, marginTop: 4 }}>
+                      <MessageSquare style={{ width: 11, height: 11, color: 'var(--purple-400)', flexShrink: 0, marginTop: 2 }} />
+                      <span style={{ fontSize: 11, color: 'var(--gray-500)', fontStyle: 'italic' }}>{item.notes}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 8, borderTop: '2px solid var(--gray-200)' }}>
+                <span style={{ fontWeight: 800, color: 'var(--gray-900)', fontSize: 13 }}>Total</span>
+                <span style={{ fontWeight: 900, color: 'var(--purple-600)', fontSize: 16 }}>R$ {order.total_price?.toFixed(2)}</span>
+              </div>
+            </div>
           </div>
 
-          {order.notes && (
-            <div style={{ marginBottom: 16, padding: 14, borderRadius: 'var(--r-md)', background: '#fefce8', border: '1px solid #fef08a' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#a16207', marginBottom: 6 }}>Observações</div>
-              <div style={{ fontSize: 13, color: '#854d0e', fontStyle: 'italic' }}>{order.notes}</div>
-            </div>
-          )}
-
-          {/* Status — Admin só altera/cancela quando é "Novo Pedido" */}
-          <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: 18 }}>
+          {/* Actions */}
+          <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: 12, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
             {order.status === 'new' ? (
-              <>
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 10 }}>Ações Disponíveis</div>
-                <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    style={{ flex: 1 }}
-                    onClick={() => { onUpdateStatus(order.id, 'cancelled'); onClose(); }}
-                  >
-                    Cancelar Pedido
-                  </button>
-                </div>
-                <div style={{ fontSize: 11, color: 'var(--gray-400)', marginBottom: 12, fontStyle: 'italic' }}>
-                  Após o pedido entrar em preparo, a alteração de status passa a ser feita pelos painéis Cozinha/Entregas.
-                </div>
-              </>
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={() => { onUpdateStatus(order.id, 'cancelled'); onClose(); }}
+              >
+                Cancelar Pedido
+              </button>
             ) : (
               <div style={{
-                padding: 12, borderRadius: 'var(--r-sm)',
+                padding: '8px 12px', borderRadius: 'var(--r-sm)',
                 background: 'var(--gray-50)', border: '1px solid var(--gray-150)',
-                fontSize: 12, color: 'var(--gray-500)', marginBottom: 12, lineHeight: 1.5,
+                fontSize: 12, color: 'var(--gray-500)', lineHeight: 1.4,
               }}>
-                🔒 Somente visualização. O status é gerenciado pelos painéis Cozinha e Entregas.
+                🔒 Status gerenciado pelos painéis Cozinha/Entregas.
               </div>
             )}
             <SendWhatsAppButton
